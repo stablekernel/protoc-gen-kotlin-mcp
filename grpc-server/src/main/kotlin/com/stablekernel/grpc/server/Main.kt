@@ -5,7 +5,7 @@ import io.ktor.server.engine.embeddedServer
 
 fun main() {
   embeddedServer(GRpc, configure = {
-    port = 9999
+    port = 2345
     serverConfigurer = {
       addService(VibeService())
       addService(ProtoReflectionService.newInstance())
