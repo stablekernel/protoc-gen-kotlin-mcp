@@ -41,7 +41,7 @@ class GRpcApplicationEngine(
   ) {
 
   class Configuration : BaseApplicationEngine.Configuration() {
-    var port: Int = 2345
+    var port: Int = 2349
 
     var serverConfigurer: ServerBuilder<*>.() -> Unit = {}
   }

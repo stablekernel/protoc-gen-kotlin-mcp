@@ -5,8 +5,8 @@ WORKDIR /app
 # Use build argument for the JAR version
 ARG JAR_VERSION
 # Copy the jar file into the container using the JAR version argument
-COPY build/libs/protoc-gen-kotlin-grpc-mcp-server-${JAR_VERSION}.jar /app/app.jar
+COPY build/libs/protoc-gen-kotlin-mcp-server-${JAR_VERSION}.jar /app/app.jar
 # Expose the port your web app runs on
-EXPOSE 2349
+EXPOSE 2345
 # Set the entry point for the application
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

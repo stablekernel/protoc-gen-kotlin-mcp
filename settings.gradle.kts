@@ -11,6 +11,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 include(
-    "grpc-server"
+    "grpc-server",
+    "mcp-server"
 )
 rootProject.name = "protoc-gen-kotlin-mcp"
