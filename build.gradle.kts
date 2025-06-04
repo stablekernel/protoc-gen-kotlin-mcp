@@ -1,5 +1,7 @@
 plugins {
+    `kotlin-dsl`
     kotlin("jvm") version "2.1.20"
+    id ("com.google.protobuf") version "0.8.19"
 }
 
 group = "com.stablekernel"
@@ -11,6 +13,9 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
+
+    implementation("com.google.protobuf:protobuf-java:4.28.2")
+    implementation("com.google.protobuf:protobuf-java-util:4.31.1")
 }
 
 tasks.test {
