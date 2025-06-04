@@ -1,7 +1,7 @@
 plugins {
     `kotlin-dsl`
     kotlin("jvm") version "2.1.20"
-    id ("com.google.protobuf") version "0.8.19"
+    id ("com.google.protobuf") version "0.9.4"
 }
 
 group = "com.stablekernel"
