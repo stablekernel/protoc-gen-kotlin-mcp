@@ -69,6 +69,26 @@ jobs:
 #          PROJECT_NAME: ${{ env.PROJECT_NAME }}
 #          JAR_VERSION: ${{ github.event.inputs.version }}
 #        run: |
+#          docker compose push protoc-gen-kotlin-grpc-server
+#
+#      # Build Docker Image
+#      - name: Build Docker Image
+#        working-directory: ./mcp-server
+#        env:
+#          REGISTRY: ${{ env.REGISTRY }}
+#          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+#          JAR_VERSION: ${{ github.event.inputs.version }}
+#        run: |
+#          docker compose build protoc-gen-kotlin-mcp-server
+#
+#      # Push Docker Image
+#      - name: Push Docker Image
+#        working-directory: ./mcp-server
+#        env:
+#          REGISTRY: ${{ env.REGISTRY }}
+#          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+#          JAR_VERSION: ${{ github.event.inputs.version }}
+#        run: |
 #          docker compose push protoc-gen-kotlin-mcp-server
 
       # Create Release and Upload JAR
