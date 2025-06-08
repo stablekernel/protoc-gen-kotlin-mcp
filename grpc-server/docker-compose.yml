@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  protoc-gen-kotlin-grpc-server:
+    image: ${REGISTRY}/${PROJECT_NAME}:${JAR_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_VERSION: ${JAR_VERSION}
+    ports:
+      - "8080:2349" # Map the container port to the host
+    working_dir: /app

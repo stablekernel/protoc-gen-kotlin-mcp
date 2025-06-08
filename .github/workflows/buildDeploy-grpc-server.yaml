@@ -1,0 +1,86 @@
+name: Build and Release Ktor Grpc Server App
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number for the release (e.g. 1.0-SNAPSHOT or 1.0)'
+        required: true
+        type: string
+
+env:
+  PROJECT_NAME: protoc-gen-kotlin-mcp-server
+  SYSTEM_TAG: protoc-gen-kotlin-mcp-server
+  REGION: us-east-1
+  SERVICE_NAME: protoc-gen-kotlin-mcp-server
+
+jobs:
+  build-deploy:
+    name: Build JAR and Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      # Gradle Setup
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Ktor Web App
+        env:
+        run: |
+          ./gradlew clean ktlintCheck
+          ./gradlew :grpc-server:generateProto
+          ./gradlew buildFatJar -Pversion=${{ github.event.inputs.version }}
+
+#      # Install Docker Compose
+#      - name: Install Docker Compose
+#        run: |
+#          sudo curl -L "https://github.com/docker/compose/releases/download/v2.36.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#          sudo chmod +x /usr/local/bin/docker-compose
+#          docker-compose --version
+#
+#      # Build Docker Image
+#      - name: Build Docker Image
+#        working-directory: ./grpc-server
+#        env:
+#          REGISTRY: ${{ env.REGISTRY }}
+#          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+#          JAR_VERSION: ${{ github.event.inputs.version }}
+#        run: |
+#          docker compose build protoc-gen-kotlin-grpc-server
+#
+#      # Push Docker Image
+#      - name: Push Docker Image
+#        working-directory: ./grpc-server
+#        env:
+#          REGISTRY: ${{ env.REGISTRY }}
+#          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+#          JAR_VERSION: ${{ github.event.inputs.version }}
+#        run: |
+#          docker compose push protoc-gen-kotlin-mcp-server
+
+      # Create Release and Upload JAR
+      - name: Create Release and Upload JAR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          TAG_NAME="v${VERSION}"
+          RELEASE_NAME="$TAG_NAME"
+          JAR_PATH="./grpc-server/build/libs/protoc-gen-kotlin-grpc-server-${VERSION}.jar"
+          JAR_PATH2="./mcp-server/build/libs/protoc-gen-kotlin-mcp-server-${VERSION}.jar"
+          ZIP_PATH="protoc-gen-kotlin-mcp-server-${VERSION}.zip"
+          zip $ZIP_PATH $JAR_PATH $JAR_PATH2
+          gh release create $TAG_NAME $ZIP_PATH --title "$RELEASE_NAME" --notes "protoc-gen-kotlin-mcp-server $TAG_NAME released"
