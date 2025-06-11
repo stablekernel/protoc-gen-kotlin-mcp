@@ -1,0 +1,70 @@
+[versions]
+detekt = "1.23.8"
+grpc = "1.69.0"
+java = "17"
+junit = "5.12.2"
+kotest = "5.9.1"
+kotlin = "2.1.20"
+kotlinx-coroutines = "1.10.2"
+kotlinx-rpc = "0.7.0"
+kotlinx-grpc = "0.7.0-grpc-56"
+ktlint = "12.2.0"
+ktor = "3.1.2"
+logback = "1.5.18"
+mcp = "0.5.0"
+protobuf = "0.9.4"
+
+[libraries]
+grpc-netty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
+grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
+grpc-services = { module = "io.grpc:grpc-services", version.ref = "grpc" }
+grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
+kotest = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref = "ktor" }
+ktor-client-resources = { group = "io.ktor", name = "ktor-client-resources", version.ref = "ktor" }
+ktor-server-auth = { group = "io.ktor", name = "ktor-server-auth", version.ref = "ktor" }
+ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
+ktor-server-cors = { group = "io.ktor", name = "ktor-server-cors", version.ref = "ktor" }
+ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-server-request-validation = {group = "io.ktor", name = "ktor-server-request-validation", version.ref = "ktor" }
+ktor-server-resources = { group = "io.ktor", name = "ktor-server-resources", version.ref = "ktor" }
+ktor-server-test-host = { group = "io.ktor", name = "ktor-server-test-host", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+kotlinx-grpc = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinx-grpc"}
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
+mcp-kotlin = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcp" }
+
+[plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kotlinx-rpc = { id = "org.jetbrains.kotlinx.rpc.plugin", version.ref = "kotlinx-rpc"}
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
+
+[bundles]
+ktor-client = [
+  "ktor-client-auth",
+  "ktor-client-cio",
+  "ktor-client-content-negotiation",
+  "ktor-client-core",
+  "ktor-client-logging",
+  "ktor-client-resources",
+  "ktor-serialization-json",
+]
+ktor-server = [
+  "ktor-server-auth",
+  "ktor-server-core",
+  "ktor-server-cors",
+  "ktor-server-netty",
+  "ktor-server-content-negotiation",
+  "ktor-server-request-validation",
+  "ktor-server-resources",
+  "ktor-serialization-json",
+]
