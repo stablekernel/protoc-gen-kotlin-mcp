@@ -12,6 +12,8 @@ plugins {
 }
 include(
     "grpc-server",
-    "mcp-server"
+    "mcp-server",
+    "wire-compiler",
+    "wire-kotlin-generator"
 )
 rootProject.name = "protoc-gen-kotlin-mcp"
