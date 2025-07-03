@@ -16,8 +16,17 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
-class VibeService : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
-    val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+class VibeService(
+    private val client: Client =
+        Client(
+            Implementation(
+                name = "protoc-gen-kotlin-mcp-server",
+                version = "1.0.",
+            ),
+        ),
+    coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+) : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
+
     val requestBuilder: HttpRequestBuilder.() -> Unit = {
         this.url.host = "localhost"
         this.url.port = 2345
@@ -30,17 +39,15 @@ class VibeService : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
             reconnectionTime = 120.seconds,
             requestBuilder = requestBuilder,
         )
-    val client =
-        Client(
-            Implementation(
-                name = "protoc-gen-kotlin-mcp-server",
-                version = "1.0.",
-            ),
-        )
+
 
     init {
         coroutineScope.launch {
-            client.connect(transport)
+            try {
+                client.connect(transport)
+            } catch (e: Exception) {
+                println("Failed to connect to MCP server: ${e.message}")
+            }
         }
     }
 
