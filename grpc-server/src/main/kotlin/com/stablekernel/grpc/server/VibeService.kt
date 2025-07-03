@@ -54,7 +54,12 @@ class VibeService(
     private var previousVibe: String = ""
 
     override suspend fun setVibe(request: SetVibeRequest): SetVibeResponse {
-        client.ping()
+        try {
+            client.ping()
+        } catch (e: Exception) {
+            println("Failed to ping MCP server: ${e.message}")
+            client.connect(transport)
+        }
         val prompt = client.getPrompt(GetPromptRequest("VibeRequest", arguments = mapOf("vibe" to request.vibe)))
         val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
         val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
@@ -69,7 +74,12 @@ class VibeService(
     }
 
     override suspend fun getVibe(request: examples.v1.Example.GetVibeRequest): examples.v1.Example.GetVibeResponse {
-        client.ping()
+        try {
+            client.ping()
+        } catch (e: Exception) {
+            println("Failed to ping MCP server: ${e.message}")
+            client.connect(transport)
+        }
         val prompt = client.getPrompt(GetPromptRequest(name = "VibeRequest", arguments = mapOf("vibe" to previousVibe)))
         val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
         val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
