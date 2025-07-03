@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.grpc.stub)
     implementation(libs.grpc.services)
     implementation(libs.kotlinx.grpc)
+    implementation(libs.mcp.kotlin)
 }
 
 testing {
@@ -71,6 +72,9 @@ protobuf {
             it.plugins {
                 id("grpc")
                 id("grpckt")
+            }
+            it.builtins {
+                id("kotlin")
             }
         }
     }
