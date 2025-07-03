@@ -62,6 +62,10 @@ class VibeService : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
     }
 
     override suspend fun getVibe(request: examples.v1.Example.GetVibeRequest): examples.v1.Example.GetVibeResponse {
-        return examples.v1.Example.GetVibeResponse.newBuilder().setVibe(previousVibe).build()
+        client.ping()
+        val prompt = client.getPrompt(GetPromptRequest(name = "VibeRequest", arguments = mapOf("vibe" to previousVibe)))
+        val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
+        val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
+        return examples.v1.Example.GetVibeResponse.newBuilder().setVibe(vibeRegex).build()
     }
 }
