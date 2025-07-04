@@ -1,6 +1,6 @@
 package com.stablekernel.grpc.server
 
-import io.grpc.protobuf.services.ProtoReflectionService
+import io.grpc.protobuf.services.ProtoReflectionServiceV1
 import io.ktor.server.engine.embeddedServer
 import io.modelcontextprotocol.kotlin.sdk.Implementation
 import io.modelcontextprotocol.kotlin.sdk.client.Client
@@ -11,17 +11,24 @@ import kotlinx.coroutines.launch
 
 fun main() {
     val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    val client = Client(
-        Implementation(
-            name = "protoc-gen-kotlin-mcp-server",
-            version = "1.0.",
-        ),
-    )
+    val client =
+        Client(
+            Implementation(
+                name = "protoc-gen-kotlin-mcp-server",
+                version = "1.0.",
+            ),
+        )
     embeddedServer(GRpc, configure = {
         port = 2349
         serverConfigurer = {
-            addService(VibeService(client = client, coroutineScope = coroutineScope))
-            addService(ProtoReflectionService.newInstance())
+            addService(
+                VibeService(
+                    client = client,
+                    coroutineScope = coroutineScope,
+                    urlString = "http://localhost:2345",
+                ),
+            )
+            addService(ProtoReflectionServiceV1.newInstance())
         }
     }) {
     }.start(wait = true)

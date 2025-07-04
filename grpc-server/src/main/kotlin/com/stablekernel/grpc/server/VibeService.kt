@@ -24,22 +24,21 @@ class VibeService(
                 version = "1.0.",
             ),
         ),
-    coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
+    private val urlString: String = "http://localhost:2345",
 ) : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
-
     val requestBuilder: HttpRequestBuilder.() -> Unit = {
         this.url.host = "localhost"
         this.url.port = 2345
     }
-    val transport =
+    var transport =
         HttpClient(CIO) {
             applyDefaults()
         }.mcpSseTransport(
-            urlString = "http://localhost:2345",
+            urlString = urlString,
             reconnectionTime = 30.seconds,
             requestBuilder = requestBuilder,
         )
-
 
     init {
         coroutineScope.launch {
@@ -55,12 +54,7 @@ class VibeService(
     private var previousVibe: String = ""
 
     override suspend fun setVibe(request: SetVibeRequest): SetVibeResponse {
-        try {
-            client.ping()
-        } catch (e: Exception) {
-            println("Failed to ping MCP server: ${e.message}")
-            client.connect(transport)
-        }
+        tryPingReconnectOnFailure()
         val prompt = client.getPrompt(GetPromptRequest("VibeRequest", arguments = mapOf("vibe" to request.vibe)))
         val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
         val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
@@ -75,15 +69,33 @@ class VibeService(
     }
 
     override suspend fun getVibe(request: examples.v1.Example.GetVibeRequest): examples.v1.Example.GetVibeResponse {
-        try {
-            client.ping()
-        } catch (e: Exception) {
-            println("Failed to ping MCP server: ${e.message}")
-            client.connect(transport)
-        }
+        tryPingReconnectOnFailure()
         val prompt = client.getPrompt(GetPromptRequest(name = "VibeRequest", arguments = mapOf("vibe" to previousVibe)))
         val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
         val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
         return examples.v1.Example.GetVibeResponse.newBuilder().setVibe(vibeRegex).build()
+    }
+
+    private suspend fun tryPingReconnectOnFailure() {
+        try {
+            client.ping()
+        } catch (e: Exception) {
+            println("Failed to ping MCP server: ${e.message}")
+            try {
+                transport.close()
+                client.close()
+                transport =
+                    HttpClient(CIO) {
+                        applyDefaults()
+                    }.mcpSseTransport(
+                        urlString = urlString,
+                        reconnectionTime = 30.seconds,
+                        requestBuilder = requestBuilder,
+                    )
+                client.connect(transport)
+            } catch (e: Exception) {
+                println("Failed to reconnect to MCP server: ${e.message}")
+            }
+        }
     }
 }
