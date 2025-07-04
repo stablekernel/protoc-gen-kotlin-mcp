@@ -1,6 +1,5 @@
 package com.stablekernel.grpc.server
 
-import io.grpc.protobuf.services.ProtoReflectionServiceV1
 import io.ktor.server.engine.embeddedServer
 import io.modelcontextprotocol.kotlin.sdk.Implementation
 import io.modelcontextprotocol.kotlin.sdk.client.Client
@@ -25,10 +24,9 @@ fun main() {
                 VibeService(
                     client = client,
                     coroutineScope = coroutineScope,
-                    urlString = "http://localhost:2345",
+                    clientUrlString = "http://localhost:2345",
                 ),
             )
-            addService(ProtoReflectionServiceV1.newInstance())
         }
     }) {
     }.start(wait = true)

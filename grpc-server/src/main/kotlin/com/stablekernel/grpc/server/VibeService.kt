@@ -25,7 +25,7 @@ class VibeService(
             ),
         ),
     coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
-    private val urlString: String = "http://localhost:2345",
+    private val clientUrlString: String = "http://localhost:2345",
 ) : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
     val requestBuilder: HttpRequestBuilder.() -> Unit = {
         this.url.host = "localhost"
@@ -35,8 +35,8 @@ class VibeService(
         HttpClient(CIO) {
             applyDefaults()
         }.mcpSseTransport(
-            urlString = urlString,
-            reconnectionTime = 30.seconds,
+            urlString = clientUrlString,
+            reconnectionTime = 15.seconds,
             requestBuilder = requestBuilder,
         )
 
@@ -88,8 +88,8 @@ class VibeService(
                     HttpClient(CIO) {
                         applyDefaults()
                     }.mcpSseTransport(
-                        urlString = urlString,
-                        reconnectionTime = 30.seconds,
+                        urlString = clientUrlString,
+                        reconnectionTime = 15.seconds,
                         requestBuilder = requestBuilder,
                     )
                 client.connect(transport)
