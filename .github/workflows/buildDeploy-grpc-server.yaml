@@ -1,4 +1,4 @@
-name: Build and Release Ktor Grpc Server App
+name: Build and Release Ktor Grpc & MCP Servers
 
 on:
   workflow_dispatch:
