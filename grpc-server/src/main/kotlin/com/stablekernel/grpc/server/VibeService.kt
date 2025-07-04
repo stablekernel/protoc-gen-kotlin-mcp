@@ -36,7 +36,7 @@ class VibeService(
             applyDefaults()
         }.mcpSseTransport(
             urlString = "http://localhost:2345",
-            reconnectionTime = 120.seconds,
+            reconnectionTime = 30.seconds,
             requestBuilder = requestBuilder,
         )
 
@@ -44,6 +44,7 @@ class VibeService(
     init {
         coroutineScope.launch {
             try {
+                println("Connecting to MCP server...")
                 client.connect(transport)
             } catch (e: Exception) {
                 println("Failed to connect to MCP server: ${e.message}")
