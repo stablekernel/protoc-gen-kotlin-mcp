@@ -6,7 +6,7 @@ import examples.v1.VibeServiceGrpcKt
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.request.HttpRequestBuilder
-import io.modelcontextprotocol.kotlin.sdk.GetPromptRequest
+import io.modelcontextprotocol.kotlin.sdk.CallToolRequest
 import io.modelcontextprotocol.kotlin.sdk.Implementation
 import io.modelcontextprotocol.kotlin.sdk.client.Client
 import io.modelcontextprotocol.kotlin.sdk.client.mcpSseTransport
@@ -14,6 +14,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.time.Duration.Companion.seconds
 
 class VibeService(
@@ -31,9 +34,15 @@ class VibeService(
         this.url.host = "localhost"
         this.url.port = 2345
     }
+    val json =
+        Json {
+            ignoreUnknownKeys = true
+            isLenient = true
+            prettyPrint = true
+        }
     var transport =
         HttpClient(CIO) {
-            applyDefaults()
+            applyDefaults(json = json)
         }.mcpSseTransport(
             urlString = clientUrlString,
             reconnectionTime = 15.seconds,
@@ -55,9 +64,16 @@ class VibeService(
 
     override suspend fun setVibe(request: SetVibeRequest): SetVibeResponse {
         tryPingReconnectOnFailure()
-        val prompt = client.getPrompt(GetPromptRequest("VibeRequest", arguments = mapOf("vibe" to request.vibe)))
-        val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
-        val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
+        val toolResult =
+            client.callTool(
+                CallToolRequest("SetVibeRequest", arguments = JsonObject(mapOf("vibe" to JsonPrimitive(request.vibe)))),
+            )
+        val vibeContent = toolResult?.content?.map { it.toString() }?.first() ?: "No vibe prompt obtained"
+        val vibeRegex =
+            vibeContent
+                .replace(Regex("TextContent\\(text=(.*)\\)"), "$1")
+                .replace("\\\"", "")
+                .replace("\"", "")
         val response =
             SetVibeResponse
                 .newBuilder()
@@ -70,9 +86,16 @@ class VibeService(
 
     override suspend fun getVibe(request: examples.v1.Example.GetVibeRequest): examples.v1.Example.GetVibeResponse {
         tryPingReconnectOnFailure()
-        val prompt = client.getPrompt(GetPromptRequest(name = "VibeRequest", arguments = mapOf("vibe" to previousVibe)))
-        val vibePrompt = prompt?.messages?.map { it.content.toString() }?.first() ?: "No vibe prompt obtained"
-        val vibeRegex = vibePrompt.replace(Regex(".*vibe=(.*)}\\.\\)"), "$1")
+        val toolResult =
+            client.callTool(
+                CallToolRequest(name = "GetVibeRequest", arguments = JsonObject(mapOf("vibe" to JsonPrimitive(previousVibe)))),
+            )
+        val vibeContent = toolResult?.content?.map { it.toString() }?.firstOrNull() ?: "No vibe prompt obtained"
+        val vibeRegex =
+            vibeContent
+                .replace(Regex("TextContent\\(text=(.*)\\)"), "$1")
+                .replace("\\\"", "")
+                .replace("\"", "")
         return examples.v1.Example.GetVibeResponse.newBuilder().setVibe(vibeRegex).build()
     }
 
