@@ -1,4 +1,4 @@
-name: Build and Release Ktor Grpc Server App
+name: Build and Release Ktor Grpc & MCP Servers
 
 on:
   workflow_dispatch:
@@ -41,7 +41,7 @@ jobs:
         env:
         run: |
           ./gradlew clean ktlintCheck
-          ./gradlew :grpc-server:generateProto
+          ./gradlew generateProto
           ./gradlew buildFatJar -Pversion=${{ github.event.inputs.version }}
 
 #      # Install Docker Compose
