@@ -1,4 +1,5 @@
 [versions]
+charles-kml = "0.73.0"
 detekt = "1.23.8"
 grpc = "1.69.0"
 java = "17"
@@ -6,21 +7,31 @@ junit = "5.12.2"
 kotest = "5.9.1"
 kotlin = "2.1.20"
 kotlinx-coroutines = "1.10.2"
+kotlinx-datetime = "0.6.2"
 kotlinx-rpc = "0.7.0"
 kotlinx-grpc = "0.7.0-grpc-56"
+kotlinx-serialization = "1.8.1"
+kotlinpoet = "1.17.0"
 ktlint = "12.2.0"
 ktor = "3.1.2"
 logback = "1.5.18"
 mcp = "0.5.0"
+okio = "3.11.0"
 protobuf = "0.9.4"
+wire = "5.3.3"
 
 [libraries]
+charles-kaml = { group = "com.charleskorn.kaml", name = "kaml", version.ref = "charles-kml" }
 grpc-netty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
 grpc-services = { module = "io.grpc:grpc-services", version.ref = "grpc" }
 grpc-stub = { module = "io.grpc:grpc-stub", version.ref = "grpc" }
 kotest = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinpoet = { group = "com.squareup", name = "kotlinpoet", version.ref = "kotlinpoet" }
 ktor-client-auth = { group = "io.ktor", name = "ktor-client-auth", version.ref = "ktor" }
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
@@ -40,13 +51,24 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 kotlinx-grpc = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinx-grpc"}
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 mcp-kotlin = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcp" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
+wire-java-generator = { group = "com.squareup.wire", name = "wire-java-generator", version.ref = "wire" }
+wire-swift-generator = { group = "com.squareup.wire", name = "wire-swift-generator", version.ref = "wire" }
+wire-grpc-client = { module = "com.squareup.wire:wire-grpc-client", version.ref = "wire" }
+wire-runtime = { module = "com.squareup.wire:wire-runtime", version.ref = "wire" }
+wire-schema = { module = "com.squareup.wire:wire-schema", version.ref = "wire" }
 
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+jetbrains-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize" }
 kotlinx-rpc = { id = "org.jetbrains.kotlinx.rpc.plugin", version.ref = "kotlinx-rpc"}
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
 
 [bundles]
 ktor-client = [
