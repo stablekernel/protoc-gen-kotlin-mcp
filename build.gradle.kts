@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "2.1.20"
     id ("com.google.protobuf") version "0.9.4"
-    alias (libs.plugins.serialization)
+    id (libs.plugins.serialization.get().pluginId) version "2.1.20"
 }
 
 group = "com.stablekernel"
