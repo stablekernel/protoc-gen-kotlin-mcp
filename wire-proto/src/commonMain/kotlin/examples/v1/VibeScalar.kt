@@ -2,131 +2,536 @@
 // Source: examples.v1.VibeScalar in examples/v1/example.proto
 package examples.v1
 
+import com.squareup.wire.EnumAdapter
+import com.squareup.wire.FieldEncoding
+import com.squareup.wire.Message
+import com.squareup.wire.ProtoAdapter
+import com.squareup.wire.ProtoReader
+import com.squareup.wire.ProtoWriter
+import com.squareup.wire.ReverseProtoWriter
+import com.squareup.wire.Syntax.PROTO_3
+import com.squareup.wire.WireEnum
+import com.squareup.wire.WireField
+import com.squareup.wire.`internal`.JvmField
+import com.squareup.wire.`internal`.JvmStatic
+import com.squareup.wire.`internal`.immutableCopyOf
 import kotlin.Any
+import kotlin.AssertionError
 import kotlin.Boolean
-import kotlin.ByteArray
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Double
 import kotlin.Float
 import kotlin.Int
 import kotlin.Long
+import kotlin.Nothing
+import kotlin.String
 import kotlin.collections.List
-import kotlinx.serialization.Serializable
+import okio.ByteString
 
 /**
  * The vibe scalar
  */
-@Serializable
-public data class VibeScalar(
+public class VibeScalar(
   /**
    * The details of the vibe double
    */
-  public val vibeDouble: Double = 0.0,
+  @field:WireField(
+    tag = 2,
+    adapter = "com.squareup.wire.ProtoAdapter#DOUBLE",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeDouble",
+    schemaIndex = 0,
+  )
+  public val vibe_double: Double = 0.0,
   /**
    * the details of the vibe float
    */
-  public val vibeFloat: Float = 0f,
+  @field:WireField(
+    tag = 3,
+    adapter = "com.squareup.wire.ProtoAdapter#FLOAT",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeFloat",
+    schemaIndex = 1,
+  )
+  public val vibe_float: Float = 0f,
   /**
    * The details of the vibe int32
    */
-  public val vibeInt32: Int = 0,
+  @field:WireField(
+    tag = 4,
+    adapter = "com.squareup.wire.ProtoAdapter#INT32",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeInt32",
+    schemaIndex = 2,
+  )
+  public val vibe_int32: Int = 0,
   /**
    * The details of the vibe int64
    */
-  public val vibeInt64: Long = 0L,
+  @field:WireField(
+    tag = 5,
+    adapter = "com.squareup.wire.ProtoAdapter#INT64",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeInt64",
+    schemaIndex = 3,
+  )
+  public val vibe_int64: Long = 0L,
   /**
    * The details of the vibe uint32
    */
-  public val vibeUint32: Int? = null,
+  @field:WireField(
+    tag = 6,
+    adapter = "com.squareup.wire.ProtoAdapter#UINT32",
+    jsonName = "vibeUint32",
+    schemaIndex = 4,
+  )
+  public val vibe_uint32: Int? = null,
   /**
    * The details of the vibe uint64
    */
-  public val vibeUint64: Long = 0L,
+  @field:WireField(
+    tag = 7,
+    adapter = "com.squareup.wire.ProtoAdapter#UINT64",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeUint64",
+    schemaIndex = 5,
+  )
+  public val vibe_uint64: Long = 0L,
   /**
    * The details of the vibe sint32
    */
-  public val vibeSint32: Int = 0,
+  @field:WireField(
+    tag = 8,
+    adapter = "com.squareup.wire.ProtoAdapter#SINT32",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeSint32",
+    schemaIndex = 6,
+  )
+  public val vibe_sint32: Int = 0,
   /**
    * The details of the vibe sint64
    */
-  public val vibeSint64: Long = 0L,
+  @field:WireField(
+    tag = 9,
+    adapter = "com.squareup.wire.ProtoAdapter#SINT64",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeSint64",
+    schemaIndex = 7,
+  )
+  public val vibe_sint64: Long = 0L,
   /**
    * The details of the vibe fixed32
    */
-  public val vibeFixed32: Int = 0,
+  @field:WireField(
+    tag = 10,
+    adapter = "com.squareup.wire.ProtoAdapter#FIXED32",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeFixed32",
+    schemaIndex = 8,
+  )
+  public val vibe_fixed32: Int = 0,
   /**
    * The details of the vibe fixed64
    */
-  public val vibeFixed64: Long = 0L,
+  @field:WireField(
+    tag = 11,
+    adapter = "com.squareup.wire.ProtoAdapter#FIXED64",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeFixed64",
+    schemaIndex = 9,
+  )
+  public val vibe_fixed64: Long = 0L,
   /**
    * The details of the vibe sfixed32
    */
-  public val vibeSfixed32: Int = 0,
+  @field:WireField(
+    tag = 12,
+    adapter = "com.squareup.wire.ProtoAdapter#SFIXED32",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeSfixed32",
+    schemaIndex = 10,
+  )
+  public val vibe_sfixed32: Int = 0,
   /**
    * The details of the vibe sfixed64
    */
-  public val vibeSfixed64: Long = 0L,
+  @field:WireField(
+    tag = 13,
+    adapter = "com.squareup.wire.ProtoAdapter#SFIXED64",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeSfixed64",
+    schemaIndex = 11,
+  )
+  public val vibe_sfixed64: Long = 0L,
   /**
    * The details of the vibe bool
    */
-  public val vibeBool: Boolean = false,
+  @field:WireField(
+    tag = 14,
+    adapter = "com.squareup.wire.ProtoAdapter#BOOL",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeBool",
+    schemaIndex = 12,
+  )
+  public val vibe_bool: Boolean = false,
   /**
    * the details of the vibe bytes
    */
-  public val vibeBytes: ByteArray = ByteArray(0),
+  @field:WireField(
+    tag = 15,
+    adapter = "com.squareup.wire.ProtoAdapter#BYTES",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeBytes",
+    schemaIndex = 13,
+  )
+  public val vibe_bytes: ByteString = ByteString.EMPTY,
+  vibe_enum: List<VibeEnum> = emptyList(),
+  unknownFields: ByteString = ByteString.EMPTY,
+) : Message<VibeScalar, Nothing>(ADAPTER, unknownFields) {
   /**
    * The details of the vibe string
    */
-  public val vibeEnum: List<VibeEnum> = emptyList(),
-) {
+  @field:WireField(
+    tag = 16,
+    adapter = "examples.v1.VibeScalar${'$'}VibeEnum#ADAPTER",
+    label = WireField.Label.REPEATED,
+    jsonName = "vibeEnum",
+    schemaIndex = 14,
+  )
+  public val vibe_enum: List<VibeEnum> = immutableCopyOf("vibe_enum", vibe_enum)
+
+  @Deprecated(
+    message = "Shouldn't be used in Kotlin",
+    level = DeprecationLevel.HIDDEN,
+  )
+  override fun newBuilder(): Nothing = throw AssertionError("Builders are deprecated and only available in a javaInterop build; see https://square.github.io/wire/wire_compiler/#kotlin")
+
   override fun equals(other: Any?): Boolean {
     if (other === this) return true
     if (other !is VibeScalar) return false
-    if (vibeDouble != other.vibeDouble) return false
-    if (vibeFloat != other.vibeFloat) return false
-    if (vibeInt32 != other.vibeInt32) return false
-    if (vibeInt64 != other.vibeInt64) return false
-    if (vibeUint32 != other.vibeUint32) return false
-    if (vibeUint64 != other.vibeUint64) return false
-    if (vibeSint32 != other.vibeSint32) return false
-    if (vibeSint64 != other.vibeSint64) return false
-    if (vibeFixed32 != other.vibeFixed32) return false
-    if (vibeFixed64 != other.vibeFixed64) return false
-    if (vibeSfixed32 != other.vibeSfixed32) return false
-    if (vibeSfixed64 != other.vibeSfixed64) return false
-    if (vibeBool != other.vibeBool) return false
-    if (vibeBytes != other.vibeBytes) return false
-    if (vibeEnum != other.vibeEnum) return false
+    if (unknownFields != other.unknownFields) return false
+    if (vibe_double != other.vibe_double) return false
+    if (vibe_float != other.vibe_float) return false
+    if (vibe_int32 != other.vibe_int32) return false
+    if (vibe_int64 != other.vibe_int64) return false
+    if (vibe_uint32 != other.vibe_uint32) return false
+    if (vibe_uint64 != other.vibe_uint64) return false
+    if (vibe_sint32 != other.vibe_sint32) return false
+    if (vibe_sint64 != other.vibe_sint64) return false
+    if (vibe_fixed32 != other.vibe_fixed32) return false
+    if (vibe_fixed64 != other.vibe_fixed64) return false
+    if (vibe_sfixed32 != other.vibe_sfixed32) return false
+    if (vibe_sfixed64 != other.vibe_sfixed64) return false
+    if (vibe_bool != other.vibe_bool) return false
+    if (vibe_bytes != other.vibe_bytes) return false
+    if (vibe_enum != other.vibe_enum) return false
     return true
   }
 
   override fun hashCode(): Int {
-    var result = super.hashCode()
+    var result = super.hashCode
     if (result == 0) {
-      result = result * 37 + vibeDouble.hashCode()
-      result = result * 37 + vibeFloat.hashCode()
-      result = result * 37 + vibeInt32.hashCode()
-      result = result * 37 + vibeInt64.hashCode()
-      result = result * 37 + (vibeUint32?.hashCode() ?: 0)
-      result = result * 37 + vibeUint64.hashCode()
-      result = result * 37 + vibeSint32.hashCode()
-      result = result * 37 + vibeSint64.hashCode()
-      result = result * 37 + vibeFixed32.hashCode()
-      result = result * 37 + vibeFixed64.hashCode()
-      result = result * 37 + vibeSfixed32.hashCode()
-      result = result * 37 + vibeSfixed64.hashCode()
-      result = result * 37 + vibeBool.hashCode()
-      result = result * 37 + vibeBytes.hashCode()
-      result = result * 37 + vibeEnum.hashCode()
+      result = unknownFields.hashCode()
+      result = result * 37 + vibe_double.hashCode()
+      result = result * 37 + vibe_float.hashCode()
+      result = result * 37 + vibe_int32.hashCode()
+      result = result * 37 + vibe_int64.hashCode()
+      result = result * 37 + (vibe_uint32?.hashCode() ?: 0)
+      result = result * 37 + vibe_uint64.hashCode()
+      result = result * 37 + vibe_sint32.hashCode()
+      result = result * 37 + vibe_sint64.hashCode()
+      result = result * 37 + vibe_fixed32.hashCode()
+      result = result * 37 + vibe_fixed64.hashCode()
+      result = result * 37 + vibe_sfixed32.hashCode()
+      result = result * 37 + vibe_sfixed64.hashCode()
+      result = result * 37 + vibe_bool.hashCode()
+      result = result * 37 + vibe_bytes.hashCode()
+      result = result * 37 + vibe_enum.hashCode()
+      super.hashCode = result
     }
     return result
+  }
+
+  override fun toString(): String {
+    val result = mutableListOf<String>()
+    result += """vibe_double=$vibe_double"""
+    result += """vibe_float=$vibe_float"""
+    result += """vibe_int32=$vibe_int32"""
+    result += """vibe_int64=$vibe_int64"""
+    if (vibe_uint32 != null) result += """vibe_uint32=$vibe_uint32"""
+    result += """vibe_uint64=$vibe_uint64"""
+    result += """vibe_sint32=$vibe_sint32"""
+    result += """vibe_sint64=$vibe_sint64"""
+    result += """vibe_fixed32=$vibe_fixed32"""
+    result += """vibe_fixed64=$vibe_fixed64"""
+    result += """vibe_sfixed32=$vibe_sfixed32"""
+    result += """vibe_sfixed64=$vibe_sfixed64"""
+    result += """vibe_bool=$vibe_bool"""
+    result += """vibe_bytes=$vibe_bytes"""
+    if (vibe_enum.isNotEmpty()) result += """vibe_enum=$vibe_enum"""
+    return result.joinToString(prefix = "VibeScalar{", separator = ", ", postfix = "}")
+  }
+
+  public fun copy(
+    vibe_double: Double = this.vibe_double,
+    vibe_float: Float = this.vibe_float,
+    vibe_int32: Int = this.vibe_int32,
+    vibe_int64: Long = this.vibe_int64,
+    vibe_uint32: Int? = this.vibe_uint32,
+    vibe_uint64: Long = this.vibe_uint64,
+    vibe_sint32: Int = this.vibe_sint32,
+    vibe_sint64: Long = this.vibe_sint64,
+    vibe_fixed32: Int = this.vibe_fixed32,
+    vibe_fixed64: Long = this.vibe_fixed64,
+    vibe_sfixed32: Int = this.vibe_sfixed32,
+    vibe_sfixed64: Long = this.vibe_sfixed64,
+    vibe_bool: Boolean = this.vibe_bool,
+    vibe_bytes: ByteString = this.vibe_bytes,
+    vibe_enum: List<VibeEnum> = this.vibe_enum,
+    unknownFields: ByteString = this.unknownFields,
+  ): VibeScalar = VibeScalar(vibe_double, vibe_float, vibe_int32, vibe_int64, vibe_uint32, vibe_uint64, vibe_sint32, vibe_sint64, vibe_fixed32, vibe_fixed64, vibe_sfixed32, vibe_sfixed64, vibe_bool, vibe_bytes, vibe_enum, unknownFields)
+
+  public companion object {
+    @JvmField
+    public val ADAPTER: ProtoAdapter<VibeScalar> = object : ProtoAdapter<VibeScalar>(
+      FieldEncoding.LENGTH_DELIMITED, 
+      VibeScalar::class, 
+      "type.googleapis.com/examples.v1.VibeScalar", 
+      PROTO_3, 
+      null, 
+      "examples/v1/example.proto"
+    ) {
+      override fun encodedSize(`value`: VibeScalar): Int {
+        var size = value.unknownFields.size
+        if (!value.vibe_double.equals(0.0)) {
+          size += ProtoAdapter.DOUBLE.encodedSizeWithTag(2, value.vibe_double)
+        }
+        if (!value.vibe_float.equals(0f)) {
+          size += ProtoAdapter.FLOAT.encodedSizeWithTag(3, value.vibe_float)
+        }
+        if (value.vibe_int32 != 0) {
+          size += ProtoAdapter.INT32.encodedSizeWithTag(4, value.vibe_int32)
+        }
+        if (value.vibe_int64 != 0L) {
+          size += ProtoAdapter.INT64.encodedSizeWithTag(5, value.vibe_int64)
+        }
+        size += ProtoAdapter.UINT32.encodedSizeWithTag(6, value.vibe_uint32)
+        if (value.vibe_uint64 != 0L) {
+          size += ProtoAdapter.UINT64.encodedSizeWithTag(7, value.vibe_uint64)
+        }
+        if (value.vibe_sint32 != 0) {
+          size += ProtoAdapter.SINT32.encodedSizeWithTag(8, value.vibe_sint32)
+        }
+        if (value.vibe_sint64 != 0L) {
+          size += ProtoAdapter.SINT64.encodedSizeWithTag(9, value.vibe_sint64)
+        }
+        if (value.vibe_fixed32 != 0) {
+          size += ProtoAdapter.FIXED32.encodedSizeWithTag(10, value.vibe_fixed32)
+        }
+        if (value.vibe_fixed64 != 0L) {
+          size += ProtoAdapter.FIXED64.encodedSizeWithTag(11, value.vibe_fixed64)
+        }
+        if (value.vibe_sfixed32 != 0) {
+          size += ProtoAdapter.SFIXED32.encodedSizeWithTag(12, value.vibe_sfixed32)
+        }
+        if (value.vibe_sfixed64 != 0L) {
+          size += ProtoAdapter.SFIXED64.encodedSizeWithTag(13, value.vibe_sfixed64)
+        }
+        if (value.vibe_bool != false) {
+          size += ProtoAdapter.BOOL.encodedSizeWithTag(14, value.vibe_bool)
+        }
+        if (value.vibe_bytes != okio.ByteString.EMPTY) {
+          size += ProtoAdapter.BYTES.encodedSizeWithTag(15, value.vibe_bytes)
+        }
+        size += VibeEnum.ADAPTER.asRepeated().encodedSizeWithTag(16, value.vibe_enum)
+        return size
+      }
+
+      override fun encode(writer: ProtoWriter, `value`: VibeScalar) {
+        if (!value.vibe_double.equals(0.0)) {
+          ProtoAdapter.DOUBLE.encodeWithTag(writer, 2, value.vibe_double)
+        }
+        if (!value.vibe_float.equals(0f)) {
+          ProtoAdapter.FLOAT.encodeWithTag(writer, 3, value.vibe_float)
+        }
+        if (value.vibe_int32 != 0) {
+          ProtoAdapter.INT32.encodeWithTag(writer, 4, value.vibe_int32)
+        }
+        if (value.vibe_int64 != 0L) {
+          ProtoAdapter.INT64.encodeWithTag(writer, 5, value.vibe_int64)
+        }
+        ProtoAdapter.UINT32.encodeWithTag(writer, 6, value.vibe_uint32)
+        if (value.vibe_uint64 != 0L) {
+          ProtoAdapter.UINT64.encodeWithTag(writer, 7, value.vibe_uint64)
+        }
+        if (value.vibe_sint32 != 0) {
+          ProtoAdapter.SINT32.encodeWithTag(writer, 8, value.vibe_sint32)
+        }
+        if (value.vibe_sint64 != 0L) {
+          ProtoAdapter.SINT64.encodeWithTag(writer, 9, value.vibe_sint64)
+        }
+        if (value.vibe_fixed32 != 0) {
+          ProtoAdapter.FIXED32.encodeWithTag(writer, 10, value.vibe_fixed32)
+        }
+        if (value.vibe_fixed64 != 0L) {
+          ProtoAdapter.FIXED64.encodeWithTag(writer, 11, value.vibe_fixed64)
+        }
+        if (value.vibe_sfixed32 != 0) {
+          ProtoAdapter.SFIXED32.encodeWithTag(writer, 12, value.vibe_sfixed32)
+        }
+        if (value.vibe_sfixed64 != 0L) {
+          ProtoAdapter.SFIXED64.encodeWithTag(writer, 13, value.vibe_sfixed64)
+        }
+        if (value.vibe_bool != false) {
+          ProtoAdapter.BOOL.encodeWithTag(writer, 14, value.vibe_bool)
+        }
+        if (value.vibe_bytes != okio.ByteString.EMPTY) {
+          ProtoAdapter.BYTES.encodeWithTag(writer, 15, value.vibe_bytes)
+        }
+        VibeEnum.ADAPTER.asRepeated().encodeWithTag(writer, 16, value.vibe_enum)
+        writer.writeBytes(value.unknownFields)
+      }
+
+      override fun encode(writer: ReverseProtoWriter, `value`: VibeScalar) {
+        writer.writeBytes(value.unknownFields)
+        VibeEnum.ADAPTER.asRepeated().encodeWithTag(writer, 16, value.vibe_enum)
+        if (value.vibe_bytes != okio.ByteString.EMPTY) {
+          ProtoAdapter.BYTES.encodeWithTag(writer, 15, value.vibe_bytes)
+        }
+        if (value.vibe_bool != false) {
+          ProtoAdapter.BOOL.encodeWithTag(writer, 14, value.vibe_bool)
+        }
+        if (value.vibe_sfixed64 != 0L) {
+          ProtoAdapter.SFIXED64.encodeWithTag(writer, 13, value.vibe_sfixed64)
+        }
+        if (value.vibe_sfixed32 != 0) {
+          ProtoAdapter.SFIXED32.encodeWithTag(writer, 12, value.vibe_sfixed32)
+        }
+        if (value.vibe_fixed64 != 0L) {
+          ProtoAdapter.FIXED64.encodeWithTag(writer, 11, value.vibe_fixed64)
+        }
+        if (value.vibe_fixed32 != 0) {
+          ProtoAdapter.FIXED32.encodeWithTag(writer, 10, value.vibe_fixed32)
+        }
+        if (value.vibe_sint64 != 0L) {
+          ProtoAdapter.SINT64.encodeWithTag(writer, 9, value.vibe_sint64)
+        }
+        if (value.vibe_sint32 != 0) {
+          ProtoAdapter.SINT32.encodeWithTag(writer, 8, value.vibe_sint32)
+        }
+        if (value.vibe_uint64 != 0L) {
+          ProtoAdapter.UINT64.encodeWithTag(writer, 7, value.vibe_uint64)
+        }
+        ProtoAdapter.UINT32.encodeWithTag(writer, 6, value.vibe_uint32)
+        if (value.vibe_int64 != 0L) {
+          ProtoAdapter.INT64.encodeWithTag(writer, 5, value.vibe_int64)
+        }
+        if (value.vibe_int32 != 0) {
+          ProtoAdapter.INT32.encodeWithTag(writer, 4, value.vibe_int32)
+        }
+        if (!value.vibe_float.equals(0f)) {
+          ProtoAdapter.FLOAT.encodeWithTag(writer, 3, value.vibe_float)
+        }
+        if (!value.vibe_double.equals(0.0)) {
+          ProtoAdapter.DOUBLE.encodeWithTag(writer, 2, value.vibe_double)
+        }
+      }
+
+      override fun decode(reader: ProtoReader): VibeScalar {
+        var vibe_double: Double = 0.0
+        var vibe_float: Float = 0f
+        var vibe_int32: Int = 0
+        var vibe_int64: Long = 0L
+        var vibe_uint32: Int? = null
+        var vibe_uint64: Long = 0L
+        var vibe_sint32: Int = 0
+        var vibe_sint64: Long = 0L
+        var vibe_fixed32: Int = 0
+        var vibe_fixed64: Long = 0L
+        var vibe_sfixed32: Int = 0
+        var vibe_sfixed64: Long = 0L
+        var vibe_bool: Boolean = false
+        var vibe_bytes: ByteString = ByteString.EMPTY
+        val vibe_enum = mutableListOf<VibeEnum>()
+        val unknownFields = reader.forEachTag { tag ->
+          when (tag) {
+            2 -> vibe_double = ProtoAdapter.DOUBLE.decode(reader)
+            3 -> vibe_float = ProtoAdapter.FLOAT.decode(reader)
+            4 -> vibe_int32 = ProtoAdapter.INT32.decode(reader)
+            5 -> vibe_int64 = ProtoAdapter.INT64.decode(reader)
+            6 -> vibe_uint32 = ProtoAdapter.UINT32.decode(reader)
+            7 -> vibe_uint64 = ProtoAdapter.UINT64.decode(reader)
+            8 -> vibe_sint32 = ProtoAdapter.SINT32.decode(reader)
+            9 -> vibe_sint64 = ProtoAdapter.SINT64.decode(reader)
+            10 -> vibe_fixed32 = ProtoAdapter.FIXED32.decode(reader)
+            11 -> vibe_fixed64 = ProtoAdapter.FIXED64.decode(reader)
+            12 -> vibe_sfixed32 = ProtoAdapter.SFIXED32.decode(reader)
+            13 -> vibe_sfixed64 = ProtoAdapter.SFIXED64.decode(reader)
+            14 -> vibe_bool = ProtoAdapter.BOOL.decode(reader)
+            15 -> vibe_bytes = ProtoAdapter.BYTES.decode(reader)
+            16 -> try {
+              VibeEnum.ADAPTER.tryDecode(reader, vibe_enum)
+            } catch (e: ProtoAdapter.EnumConstantNotFoundException) {
+              reader.addUnknownField(tag, FieldEncoding.VARINT, e.value.toLong())
+            }
+            else -> reader.readUnknownField(tag)
+          }
+        }
+        return VibeScalar(
+          vibe_double = vibe_double,
+          vibe_float = vibe_float,
+          vibe_int32 = vibe_int32,
+          vibe_int64 = vibe_int64,
+          vibe_uint32 = vibe_uint32,
+          vibe_uint64 = vibe_uint64,
+          vibe_sint32 = vibe_sint32,
+          vibe_sint64 = vibe_sint64,
+          vibe_fixed32 = vibe_fixed32,
+          vibe_fixed64 = vibe_fixed64,
+          vibe_sfixed32 = vibe_sfixed32,
+          vibe_sfixed64 = vibe_sfixed64,
+          vibe_bool = vibe_bool,
+          vibe_bytes = vibe_bytes,
+          vibe_enum = vibe_enum,
+          unknownFields = unknownFields
+        )
+      }
+
+      override fun redact(`value`: VibeScalar): VibeScalar = value.copy(
+        unknownFields = ByteString.EMPTY
+      )
+    }
+
+    private const val serialVersionUID: Long = 0L
   }
 
   /**
    * The details of the vibe string
    */
-  @Serializable
-  public enum class VibeEnum {
-    VIBE_UNSET,
-    VIBE_GOOD,
+  public enum class VibeEnum(
+    override val `value`: Int,
+  ) : WireEnum {
+    VIBE_UNSET(0),
+    VIBE_GOOD(1),
+    ;
+
+    public companion object {
+      @JvmField
+      public val ADAPTER: ProtoAdapter<VibeEnum> = object : EnumAdapter<VibeEnum>(
+        VibeEnum::class, 
+        PROTO_3, 
+        VibeEnum.VIBE_UNSET
+      ) {
+        override fun fromValue(`value`: Int): VibeEnum? = VibeEnum.fromValue(`value`)
+      }
+
+      @JvmStatic
+      public fun fromValue(`value`: Int): VibeEnum? = when (`value`) {
+        0 -> VIBE_UNSET
+        1 -> VIBE_GOOD
+        else -> null
+      }
+    }
   }
 }

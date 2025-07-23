@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Square, Inc.
+ * Copyright (C) 2013 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -320,7 +320,7 @@ class WireCompiler internal constructor(
             var kotlinBoxOneOfsMinSize = 5_000
             var kotlinExclusive = true
             var kotlinRpcCallStyle = RpcCallStyle.SUSPENDING
-            var kotlinRpcRole = RpcRole.SERVER
+            var kotlinRpcRole = RpcRole.CLIENT
             var kotlinSingleMethodServices = false
             var kotlinNameSuffix: String? = null
             var kotlinBuildersOnly = false

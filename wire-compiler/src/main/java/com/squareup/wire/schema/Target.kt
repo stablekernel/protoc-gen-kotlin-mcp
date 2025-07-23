@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Square, Inc.
+ * Copyright (C) 2018 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ data class KotlinTarget(
     /** Blocking or suspending. */
     val rpcCallStyle: RpcCallStyle = RpcCallStyle.SUSPENDING,
     /** Client or server. */
-    val rpcRole: RpcRole = RpcRole.SERVER,
+    val rpcRole: RpcRole = RpcRole.CLIENT,
     /** True for emitted services to implement one interface per RPC. */
     val singleMethodServices: Boolean = false,
     /**

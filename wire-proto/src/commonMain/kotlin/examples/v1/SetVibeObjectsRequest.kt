@@ -2,34 +2,127 @@
 // Source: examples.v1.SetVibeObjectsRequest in examples/v1/example.proto
 package examples.v1
 
+import com.squareup.wire.FieldEncoding
+import com.squareup.wire.Message
+import com.squareup.wire.ProtoAdapter
+import com.squareup.wire.ProtoReader
+import com.squareup.wire.ProtoWriter
+import com.squareup.wire.ReverseProtoWriter
+import com.squareup.wire.Syntax.PROTO_3
+import com.squareup.wire.WireField
+import com.squareup.wire.`internal`.JvmField
+import com.squareup.wire.`internal`.immutableCopyOf
+import com.squareup.wire.`internal`.redactElements
 import kotlin.Any
+import kotlin.AssertionError
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Int
+import kotlin.Long
+import kotlin.Nothing
+import kotlin.String
 import kotlin.collections.List
-import kotlinx.serialization.Serializable
+import okio.ByteString
 
 /**
  * The request to set multiple vibe objects on the server
  */
-@Serializable
-public data class SetVibeObjectsRequest(
+public class SetVibeObjectsRequest(
+  vibe_object: List<SomeVibeObject> = emptyList(),
+  unknownFields: ByteString = ByteString.EMPTY,
+) : Message<SetVibeObjectsRequest, Nothing>(ADAPTER, unknownFields) {
   /**
    * The details of the vibe
    */
-  public val vibeObject: List<SomeVibeObject> = emptyList(),
-) {
+  @field:WireField(
+    tag = 1,
+    adapter = "examples.v1.SomeVibeObject#ADAPTER",
+    label = WireField.Label.REPEATED,
+    jsonName = "vibeObject",
+    schemaIndex = 0,
+  )
+  public val vibe_object: List<SomeVibeObject> = immutableCopyOf("vibe_object", vibe_object)
+
+  @Deprecated(
+    message = "Shouldn't be used in Kotlin",
+    level = DeprecationLevel.HIDDEN,
+  )
+  override fun newBuilder(): Nothing = throw AssertionError("Builders are deprecated and only available in a javaInterop build; see https://square.github.io/wire/wire_compiler/#kotlin")
+
   override fun equals(other: Any?): Boolean {
     if (other === this) return true
     if (other !is SetVibeObjectsRequest) return false
-    if (vibeObject != other.vibeObject) return false
+    if (unknownFields != other.unknownFields) return false
+    if (vibe_object != other.vibe_object) return false
     return true
   }
 
   override fun hashCode(): Int {
-    var result = super.hashCode()
+    var result = super.hashCode
     if (result == 0) {
-      result = result * 37 + vibeObject.hashCode()
+      result = unknownFields.hashCode()
+      result = result * 37 + vibe_object.hashCode()
+      super.hashCode = result
     }
     return result
+  }
+
+  override fun toString(): String {
+    val result = mutableListOf<String>()
+    if (vibe_object.isNotEmpty()) result += """vibe_object=$vibe_object"""
+    return result.joinToString(prefix = "SetVibeObjectsRequest{", separator = ", ", postfix = "}")
+  }
+
+  public fun copy(vibe_object: List<SomeVibeObject> = this.vibe_object, unknownFields: ByteString = this.unknownFields): SetVibeObjectsRequest = SetVibeObjectsRequest(vibe_object, unknownFields)
+
+  public companion object {
+    @JvmField
+    public val ADAPTER: ProtoAdapter<SetVibeObjectsRequest> =
+        object : ProtoAdapter<SetVibeObjectsRequest>(
+      FieldEncoding.LENGTH_DELIMITED, 
+      SetVibeObjectsRequest::class, 
+      "type.googleapis.com/examples.v1.SetVibeObjectsRequest", 
+      PROTO_3, 
+      null, 
+      "examples/v1/example.proto"
+    ) {
+      override fun encodedSize(`value`: SetVibeObjectsRequest): Int {
+        var size = value.unknownFields.size
+        size += SomeVibeObject.ADAPTER.asRepeated().encodedSizeWithTag(1, value.vibe_object)
+        return size
+      }
+
+      override fun encode(writer: ProtoWriter, `value`: SetVibeObjectsRequest) {
+        SomeVibeObject.ADAPTER.asRepeated().encodeWithTag(writer, 1, value.vibe_object)
+        writer.writeBytes(value.unknownFields)
+      }
+
+      override fun encode(writer: ReverseProtoWriter, `value`: SetVibeObjectsRequest) {
+        writer.writeBytes(value.unknownFields)
+        SomeVibeObject.ADAPTER.asRepeated().encodeWithTag(writer, 1, value.vibe_object)
+      }
+
+      override fun decode(reader: ProtoReader): SetVibeObjectsRequest {
+        val vibe_object = mutableListOf<SomeVibeObject>()
+        val unknownFields = reader.forEachTag { tag ->
+          when (tag) {
+            1 -> vibe_object.add(SomeVibeObject.ADAPTER.decode(reader))
+            else -> reader.readUnknownField(tag)
+          }
+        }
+        return SetVibeObjectsRequest(
+          vibe_object = vibe_object,
+          unknownFields = unknownFields
+        )
+      }
+
+      override fun redact(`value`: SetVibeObjectsRequest): SetVibeObjectsRequest = value.copy(
+        vibe_object = value.vibe_object.redactElements(SomeVibeObject.ADAPTER),
+        unknownFields = ByteString.EMPTY
+      )
+    }
+
+    private const val serialVersionUID: Long = 0L
   }
 }

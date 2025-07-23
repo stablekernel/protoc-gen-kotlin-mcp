@@ -16,9 +16,14 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.wire.runtime)
             implementation(libs.wire.schema)
+            implementation(libs.wire.grpc.client)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
             implementation(libs.okio)
+            implementation(libs.mcp.kotlin)
+            implementation(libs.bundles.ktor.client)
+            implementation(libs.bundles.ktor.server)
+            implementation(libs.logback.classic)
         }
         commonTest.dependencies {}
     }

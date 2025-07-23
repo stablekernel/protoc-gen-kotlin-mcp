@@ -2,40 +2,158 @@
 // Source: examples.v1.SetVibeDetailsRequest in examples/v1/example.proto
 package examples.v1
 
+import com.squareup.wire.FieldEncoding
+import com.squareup.wire.Message
+import com.squareup.wire.ProtoAdapter
+import com.squareup.wire.ProtoReader
+import com.squareup.wire.ProtoWriter
+import com.squareup.wire.ReverseProtoWriter
+import com.squareup.wire.Syntax.PROTO_3
+import com.squareup.wire.WireField
+import com.squareup.wire.`internal`.JvmField
+import com.squareup.wire.`internal`.sanitize
 import kotlin.Any
+import kotlin.AssertionError
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Int
+import kotlin.Long
+import kotlin.Nothing
 import kotlin.String
-import kotlinx.serialization.Serializable
+import okio.ByteString
 
 /**
  * The detailed vibe of the server
  */
-@Serializable
-public data class SetVibeDetailsRequest(
+public class SetVibeDetailsRequest(
   /**
    * The vibe of the string to be set
    */
+  @field:WireField(
+    tag = 1,
+    adapter = "com.squareup.wire.ProtoAdapter#STRING",
+    label = WireField.Label.OMIT_IDENTITY,
+    schemaIndex = 0,
+  )
   public val vibe: String = "",
   /**
    * The details of the vibe
    */
-  public val vibeScalar: VibeScalar? = null,
-) {
+  @field:WireField(
+    tag = 2,
+    adapter = "examples.v1.VibeScalar#ADAPTER",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeScalar",
+    schemaIndex = 1,
+  )
+  public val vibe_scalar: VibeScalar? = null,
+  unknownFields: ByteString = ByteString.EMPTY,
+) : Message<SetVibeDetailsRequest, Nothing>(ADAPTER, unknownFields) {
+  @Deprecated(
+    message = "Shouldn't be used in Kotlin",
+    level = DeprecationLevel.HIDDEN,
+  )
+  override fun newBuilder(): Nothing = throw AssertionError("Builders are deprecated and only available in a javaInterop build; see https://square.github.io/wire/wire_compiler/#kotlin")
+
   override fun equals(other: Any?): Boolean {
     if (other === this) return true
     if (other !is SetVibeDetailsRequest) return false
+    if (unknownFields != other.unknownFields) return false
     if (vibe != other.vibe) return false
-    if (vibeScalar != other.vibeScalar) return false
+    if (vibe_scalar != other.vibe_scalar) return false
     return true
   }
 
   override fun hashCode(): Int {
-    var result = super.hashCode()
+    var result = super.hashCode
     if (result == 0) {
+      result = unknownFields.hashCode()
       result = result * 37 + vibe.hashCode()
-      result = result * 37 + (vibeScalar?.hashCode() ?: 0)
+      result = result * 37 + (vibe_scalar?.hashCode() ?: 0)
+      super.hashCode = result
     }
     return result
+  }
+
+  override fun toString(): String {
+    val result = mutableListOf<String>()
+    result += """vibe=${sanitize(vibe)}"""
+    if (vibe_scalar != null) result += """vibe_scalar=$vibe_scalar"""
+    return result.joinToString(prefix = "SetVibeDetailsRequest{", separator = ", ", postfix = "}")
+  }
+
+  public fun copy(
+    vibe: String = this.vibe,
+    vibe_scalar: VibeScalar? = this.vibe_scalar,
+    unknownFields: ByteString = this.unknownFields,
+  ): SetVibeDetailsRequest = SetVibeDetailsRequest(vibe, vibe_scalar, unknownFields)
+
+  public companion object {
+    @JvmField
+    public val ADAPTER: ProtoAdapter<SetVibeDetailsRequest> =
+        object : ProtoAdapter<SetVibeDetailsRequest>(
+      FieldEncoding.LENGTH_DELIMITED, 
+      SetVibeDetailsRequest::class, 
+      "type.googleapis.com/examples.v1.SetVibeDetailsRequest", 
+      PROTO_3, 
+      null, 
+      "examples/v1/example.proto"
+    ) {
+      override fun encodedSize(`value`: SetVibeDetailsRequest): Int {
+        var size = value.unknownFields.size
+        if (value.vibe != "") {
+          size += ProtoAdapter.STRING.encodedSizeWithTag(1, value.vibe)
+        }
+        if (value.vibe_scalar != null) {
+          size += VibeScalar.ADAPTER.encodedSizeWithTag(2, value.vibe_scalar)
+        }
+        return size
+      }
+
+      override fun encode(writer: ProtoWriter, `value`: SetVibeDetailsRequest) {
+        if (value.vibe != "") {
+          ProtoAdapter.STRING.encodeWithTag(writer, 1, value.vibe)
+        }
+        if (value.vibe_scalar != null) {
+          VibeScalar.ADAPTER.encodeWithTag(writer, 2, value.vibe_scalar)
+        }
+        writer.writeBytes(value.unknownFields)
+      }
+
+      override fun encode(writer: ReverseProtoWriter, `value`: SetVibeDetailsRequest) {
+        writer.writeBytes(value.unknownFields)
+        if (value.vibe_scalar != null) {
+          VibeScalar.ADAPTER.encodeWithTag(writer, 2, value.vibe_scalar)
+        }
+        if (value.vibe != "") {
+          ProtoAdapter.STRING.encodeWithTag(writer, 1, value.vibe)
+        }
+      }
+
+      override fun decode(reader: ProtoReader): SetVibeDetailsRequest {
+        var vibe: String = ""
+        var vibe_scalar: VibeScalar? = null
+        val unknownFields = reader.forEachTag { tag ->
+          when (tag) {
+            1 -> vibe = ProtoAdapter.STRING.decode(reader)
+            2 -> vibe_scalar = VibeScalar.ADAPTER.decode(reader)
+            else -> reader.readUnknownField(tag)
+          }
+        }
+        return SetVibeDetailsRequest(
+          vibe = vibe,
+          vibe_scalar = vibe_scalar,
+          unknownFields = unknownFields
+        )
+      }
+
+      override fun redact(`value`: SetVibeDetailsRequest): SetVibeDetailsRequest = value.copy(
+        vibe_scalar = value.vibe_scalar?.let(VibeScalar.ADAPTER::redact),
+        unknownFields = ByteString.EMPTY
+      )
+    }
+
+    private const val serialVersionUID: Long = 0L
   }
 }

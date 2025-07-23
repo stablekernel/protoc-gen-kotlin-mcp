@@ -20,4 +20,5 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinpoet)
     implementation(libs.okio)
+    implementation(libs.mcp.kotlin)
 }

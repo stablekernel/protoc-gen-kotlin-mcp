@@ -2,33 +2,128 @@
 // Source: examples.v1.SetVibeArrayRequest in examples/v1/example.proto
 package examples.v1
 
+import com.squareup.wire.FieldEncoding
+import com.squareup.wire.Message
+import com.squareup.wire.ProtoAdapter
+import com.squareup.wire.ProtoReader
+import com.squareup.wire.ProtoWriter
+import com.squareup.wire.ReverseProtoWriter
+import com.squareup.wire.Syntax.PROTO_3
+import com.squareup.wire.WireField
+import com.squareup.wire.`internal`.JvmField
 import kotlin.Any
+import kotlin.AssertionError
 import kotlin.Boolean
+import kotlin.Deprecated
+import kotlin.DeprecationLevel
 import kotlin.Int
-import kotlinx.serialization.Serializable
+import kotlin.Long
+import kotlin.Nothing
+import kotlin.String
+import okio.ByteString
 
 /**
  * The vibe array request
  */
-@Serializable
-public data class SetVibeArrayRequest(
+public class SetVibeArrayRequest(
   /**
    * The details of the vibe array
    */
-  public val vibeArray: VibeArray? = null,
-) {
+  @field:WireField(
+    tag = 1,
+    adapter = "examples.v1.VibeArray#ADAPTER",
+    label = WireField.Label.OMIT_IDENTITY,
+    jsonName = "vibeArray",
+    schemaIndex = 0,
+  )
+  public val vibe_array: VibeArray? = null,
+  unknownFields: ByteString = ByteString.EMPTY,
+) : Message<SetVibeArrayRequest, Nothing>(ADAPTER, unknownFields) {
+  @Deprecated(
+    message = "Shouldn't be used in Kotlin",
+    level = DeprecationLevel.HIDDEN,
+  )
+  override fun newBuilder(): Nothing = throw AssertionError("Builders are deprecated and only available in a javaInterop build; see https://square.github.io/wire/wire_compiler/#kotlin")
+
   override fun equals(other: Any?): Boolean {
     if (other === this) return true
     if (other !is SetVibeArrayRequest) return false
-    if (vibeArray != other.vibeArray) return false
+    if (unknownFields != other.unknownFields) return false
+    if (vibe_array != other.vibe_array) return false
     return true
   }
 
   override fun hashCode(): Int {
-    var result = super.hashCode()
+    var result = super.hashCode
     if (result == 0) {
-      result = result * 37 + (vibeArray?.hashCode() ?: 0)
+      result = unknownFields.hashCode()
+      result = result * 37 + (vibe_array?.hashCode() ?: 0)
+      super.hashCode = result
     }
     return result
+  }
+
+  override fun toString(): String {
+    val result = mutableListOf<String>()
+    if (vibe_array != null) result += """vibe_array=$vibe_array"""
+    return result.joinToString(prefix = "SetVibeArrayRequest{", separator = ", ", postfix = "}")
+  }
+
+  public fun copy(vibe_array: VibeArray? = this.vibe_array, unknownFields: ByteString = this.unknownFields): SetVibeArrayRequest = SetVibeArrayRequest(vibe_array, unknownFields)
+
+  public companion object {
+    @JvmField
+    public val ADAPTER: ProtoAdapter<SetVibeArrayRequest> =
+        object : ProtoAdapter<SetVibeArrayRequest>(
+      FieldEncoding.LENGTH_DELIMITED, 
+      SetVibeArrayRequest::class, 
+      "type.googleapis.com/examples.v1.SetVibeArrayRequest", 
+      PROTO_3, 
+      null, 
+      "examples/v1/example.proto"
+    ) {
+      override fun encodedSize(`value`: SetVibeArrayRequest): Int {
+        var size = value.unknownFields.size
+        if (value.vibe_array != null) {
+          size += VibeArray.ADAPTER.encodedSizeWithTag(1, value.vibe_array)
+        }
+        return size
+      }
+
+      override fun encode(writer: ProtoWriter, `value`: SetVibeArrayRequest) {
+        if (value.vibe_array != null) {
+          VibeArray.ADAPTER.encodeWithTag(writer, 1, value.vibe_array)
+        }
+        writer.writeBytes(value.unknownFields)
+      }
+
+      override fun encode(writer: ReverseProtoWriter, `value`: SetVibeArrayRequest) {
+        writer.writeBytes(value.unknownFields)
+        if (value.vibe_array != null) {
+          VibeArray.ADAPTER.encodeWithTag(writer, 1, value.vibe_array)
+        }
+      }
+
+      override fun decode(reader: ProtoReader): SetVibeArrayRequest {
+        var vibe_array: VibeArray? = null
+        val unknownFields = reader.forEachTag { tag ->
+          when (tag) {
+            1 -> vibe_array = VibeArray.ADAPTER.decode(reader)
+            else -> reader.readUnknownField(tag)
+          }
+        }
+        return SetVibeArrayRequest(
+          vibe_array = vibe_array,
+          unknownFields = unknownFields
+        )
+      }
+
+      override fun redact(`value`: SetVibeArrayRequest): SetVibeArrayRequest = value.copy(
+        vibe_array = value.vibe_array?.let(VibeArray.ADAPTER::redact),
+        unknownFields = ByteString.EMPTY
+      )
+    }
+
+    private const val serialVersionUID: Long = 0L
   }
 }

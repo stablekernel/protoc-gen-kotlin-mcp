@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Square, Inc.
+ * Copyright (C) 2024 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,16 @@
  */
 package com.squareup.wire.kotlin
 
-enum class RpcCallStyle {
-    /** Generate coroutines APIs that require a Kotlin coroutines context. */
-    SUSPENDING,
+/** Defines how an protobuf enum type is to be generated. */
+enum class EnumMode {
+    /** The protobuf enum type will be generated as a Kotlin enum class. */
+    ENUM_CLASS,
 
-    /** Generate blocking APIs callable by Java and Kotlin. */
-    BLOCKING,
+    /**
+     * The protobuf enum type will be generated as a Kotlin sealed class, generated each constant of
+     * the enum type as data objects. On top of those constants, the sealed class will contain a
+     * `Unrecognized` data class which will contain the real decoded value for this enum if the
+     * runtime didn't have any constant matching it.
+     */
+    SEALED_CLASS,
 }
