@@ -653,6 +653,28 @@ class KotlinGenerator private constructor(
             val grpcMethod = CodeBlock.builder()
                 .add("request")
                 .build()
+            val parameters = CodeBlock.builder()
+            schema.getType(packageName + rpc.name + "Request")?.let {
+                (it as MessageType).declaredFields.forEachIndexed { index, field ->
+                    if (index >= (it as MessageType).declaredFields.size - 1) {
+                        parameters.add("\"%L\" to %T(\"%L\")", field.name, JsonPrimitive::class, field.name)
+                    } else {
+                        parameters.add("\"%L\" to %T(\"%L\"), ", field.name, JsonPrimitive::class, field.name)
+                    }
+                }
+            }
+            val parametersMethod = parameters.build()
+            val requiredParams = CodeBlock.builder()
+            schema.getType(packageName + rpc.name + "Request")?.let {
+                (it as MessageType).declaredFields.forEachIndexed { index, field ->
+                    if (index >= (it as MessageType).declaredFields.size - 1) {
+                        requiredParams.add("\"%L\"", field.name)
+                    } else {
+                        requiredParams.add("\"%L\", ", field.name)
+                    }
+                }
+            }
+            val requiredParamsMethod = requiredParams.build()
             funSpecBuilder.addModifiers(KModifier.SUSPEND)
             when {
                 // if explicitStreamingCalls is false use the GrpcStreamingCall for every streaming call (legacy).
@@ -712,7 +734,7 @@ class KotlinGenerator private constructor(
                             .addCode("mcpServer.addTool(\n" +
                                     "    name = \"%L\",\n" +
                                     "    description = \"%L\",\n" +
-                                    "    inputSchema = %T(%T(mapOf(\"%L\" to %T(\"%L\"))), required = listOf(\"%L\")),\n" +
+                                    "    inputSchema = %T(%T(mapOf(%L)), required = listOf(%L)),\n" +
                                     "    handler = { request ->\n" +
                                     "        %T(\n" +
                                     "            content =\n" +
@@ -726,10 +748,8 @@ class KotlinGenerator private constructor(
                                 rpc.documentation.sanitizeKdoc().replace("\n", " ").replace("\"", "\\\""),
                                 Tool.Input::class,
                                 JsonObject::class,
-                                rpc.requestType!!::class.constructors.first().valueParameters.find { it.annotations.firstOrNull { it.annotationClass.equals(WireField::class) } != null}?.name,
-                                JsonPrimitive::class,
-                                rpc.requestType!!::class.constructors.first().valueParameters.find { it.annotations.firstOrNull { it.annotationClass.equals(WireField::class) } != null}?.name,
-                                rpc.requestType!!::class.constructors.first().valueParameters.find { it.annotations.firstOrNull { it.annotationClass.equals(WireField::class) } != null}?.name,
+                                parametersMethod,
+                                requiredParamsMethod,
                                 CallToolResult::class,
                                 TextContent::class,
                                 rpc.name,

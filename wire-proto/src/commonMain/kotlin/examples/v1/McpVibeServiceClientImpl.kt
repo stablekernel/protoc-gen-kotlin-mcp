@@ -34,7 +34,7 @@ public class McpVibeServiceClientImpl(
     mcpServer.addTool(
         name = "SetVibeRequest",
         description = "This is a block comment with multiple lines to test block handling \"Hello World\"",
-        inputSchema = Tool.Input(JsonObject(mapOf("null" to JsonPrimitive("null"))), required = listOf("null")),
+        inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"))), required = listOf("vibe")),
         handler = { request ->
             CallToolResult(
                 content =
@@ -55,7 +55,7 @@ public class McpVibeServiceClientImpl(
     mcpServer.addTool(
         name = "GetVibeRequest",
         description = "Get Vibe of the server",
-        inputSchema = Tool.Input(JsonObject(mapOf("null" to JsonPrimitive("null"))), required = listOf("null")),
+        inputSchema = Tool.Input(JsonObject(mapOf()), required = listOf()),
         handler = { request ->
             CallToolResult(
                 content =
@@ -75,7 +75,7 @@ public class McpVibeServiceClientImpl(
     mcpServer.addTool(
         name = "SetVibeDetailsRequest",
         description = "Set vibe details",
-        inputSchema = Tool.Input(JsonObject(mapOf("null" to JsonPrimitive("null"))), required = listOf("null")),
+        inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"), "vibe_scalar" to JsonPrimitive("vibe_scalar"))), required = listOf("vibe", "vibe_scalar")),
         handler = { request ->
             CallToolResult(
                 content =
@@ -95,7 +95,7 @@ public class McpVibeServiceClientImpl(
     mcpServer.addTool(
         name = "SetVibeArrayRequest",
         description = "Set the vibe arrays",
-        inputSchema = Tool.Input(JsonObject(mapOf("null" to JsonPrimitive("null"))), required = listOf("null")),
+        inputSchema = Tool.Input(JsonObject(mapOf("vibe_array" to JsonPrimitive("vibe_array"))), required = listOf("vibe_array")),
         handler = { request ->
             CallToolResult(
                 content =
@@ -115,7 +115,7 @@ public class McpVibeServiceClientImpl(
     mcpServer.addTool(
         name = "SetVibeObjectsRequest",
         description = "Set multiple vibe objects",
-        inputSchema = Tool.Input(JsonObject(mapOf("null" to JsonPrimitive("null"))), required = listOf("null")),
+        inputSchema = Tool.Input(JsonObject(mapOf("vibe_object" to JsonPrimitive("vibe_object"))), required = listOf("vibe_object")),
         handler = { request ->
             CallToolResult(
                 content =
