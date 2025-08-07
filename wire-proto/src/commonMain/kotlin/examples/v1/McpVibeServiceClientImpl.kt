@@ -3,9 +3,12 @@
 package examples.v1
 
 import io.modelcontextprotocol.kotlin.sdk.CallToolResult
+import io.modelcontextprotocol.kotlin.sdk.ReadResourceResult
 import io.modelcontextprotocol.kotlin.sdk.TextContent
+import io.modelcontextprotocol.kotlin.sdk.TextResourceContents
 import io.modelcontextprotocol.kotlin.sdk.Tool
 import io.modelcontextprotocol.kotlin.sdk.server.Server
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
@@ -24,107 +27,285 @@ public class McpVibeServiceClientImpl(
   public val client: GrpcVibeServiceClient,
   public val mcpServer: Server,
 ) : McpVibeServiceClient {
+  override fun VibeServiceSetup() {
+    SetVibeHandler()
+    GetVibeHandler()
+    SetVibeDetailsHandler()
+    SetVibeArrayHandler()
+    SetVibeObjectsHandler()
+  }
+
   /**
    * This is a block comment
    * with multiple lines
    * to test block handling
    * "Hello World"
    */
-  override suspend fun SetVibe(request: SetVibeRequest): SetVibeResponse {
+  override fun SetVibeHandler() {
     mcpServer.addTool(
-        name = "SetVibeRequest",
-        description = "This is a block comment with multiple lines to test block handling \"Hello World\"",
-        inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"))), required = listOf("vibe")),
-        handler = { request ->
-            CallToolResult(
-                content =
-                    listOf(
-                        TextContent(request.toString()),
-                    ),
-            )
-        },
+      name = "SetVibeRequest",
+      description = "This is a block comment with multiple lines to test block handling \"Hello World\"",
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"))), required = listOf("vibe")),
+      handler = { request ->
+        val response = client.SetVibe(Json.decodeFromString<SetVibeRequest>(request.toString()))
+        CallToolResult(
+            content =
+              listOf(
+                TextContent(response.toString()),
+              ),
+        )
+      },
     )
-    return client.SetVibe(request)
+    mcpServer.addResource(
+      uri = "proto://SetVibeRequest",
+      name = "SetVibeRequest",
+      description = "Protocol buffer message for SetVibeRequest",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeRequest resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
+    mcpServer.addResource(
+      uri = "proto://SetVibeResponse",
+      name = "SetVibeResponse",
+      description = "Protocol buffer message for SetVibeResponse",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeResponse resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
   }
 
   /**
    * Get Vibe
    * of the server
    */
-  override suspend fun GetVibe(request: GetVibeRequest): GetVibeResponse {
+  override fun GetVibeHandler() {
     mcpServer.addTool(
-        name = "GetVibeRequest",
-        description = "Get Vibe of the server",
-        inputSchema = Tool.Input(JsonObject(mapOf()), required = listOf()),
-        handler = { request ->
-            CallToolResult(
-                content =
-                    listOf(
-                        TextContent(request.toString()),
-                    ),
-            )
-        },
+      name = "GetVibeRequest",
+      description = "Get Vibe of the server",
+      inputSchema = Tool.Input(JsonObject(mapOf()), required = listOf()),
+      handler = { request ->
+        val response = client.GetVibe(Json.decodeFromString<GetVibeRequest>(request.toString()))
+        CallToolResult(
+            content =
+              listOf(
+                TextContent(response.toString()),
+              ),
+        )
+      },
     )
-    return client.GetVibe(request)
+    mcpServer.addResource(
+      uri = "proto://GetVibeRequest",
+      name = "GetVibeRequest",
+      description = "Protocol buffer message for GetVibeRequest",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the GetVibeRequest resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
+    mcpServer.addResource(
+      uri = "proto://GetVibeResponse",
+      name = "GetVibeResponse",
+      description = "Protocol buffer message for GetVibeResponse",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the GetVibeResponse resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
   }
 
   /**
    * Set vibe details
    */
-  override suspend fun SetVibeDetails(request: SetVibeDetailsRequest): SetVibeResponse {
+  override fun SetVibeDetailsHandler() {
     mcpServer.addTool(
-        name = "SetVibeDetailsRequest",
-        description = "Set vibe details",
-        inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"), "vibe_scalar" to JsonPrimitive("vibe_scalar"))), required = listOf("vibe", "vibe_scalar")),
-        handler = { request ->
-            CallToolResult(
-                content =
-                    listOf(
-                        TextContent(request.toString()),
-                    ),
-            )
-        },
+      name = "SetVibeDetailsRequest",
+      description = "Set vibe details",
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"), "vibe_scalar" to JsonPrimitive("vibe_scalar"))), required = listOf("vibe", "vibe_scalar")),
+      handler = { request ->
+        val response = client.SetVibeDetails(Json.decodeFromString<SetVibeDetailsRequest>(request.toString()))
+        CallToolResult(
+            content =
+              listOf(
+                TextContent(response.toString()),
+              ),
+        )
+      },
     )
-    return client.SetVibeDetails(request)
+    mcpServer.addResource(
+      uri = "proto://SetVibeDetailsRequest",
+      name = "SetVibeDetailsRequest",
+      description = "Protocol buffer message for SetVibeDetailsRequest",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeDetailsRequest resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
+    mcpServer.addResource(
+      uri = "proto://SetVibeDetailsResponse",
+      name = "SetVibeDetailsResponse",
+      description = "Protocol buffer message for SetVibeDetailsResponse",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeDetailsResponse resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
   }
 
   /**
    * Set the vibe arrays
    */
-  override suspend fun SetVibeArray(request: SetVibeArrayRequest): SetVibeArrayResponse {
+  override fun SetVibeArrayHandler() {
     mcpServer.addTool(
-        name = "SetVibeArrayRequest",
-        description = "Set the vibe arrays",
-        inputSchema = Tool.Input(JsonObject(mapOf("vibe_array" to JsonPrimitive("vibe_array"))), required = listOf("vibe_array")),
-        handler = { request ->
-            CallToolResult(
-                content =
-                    listOf(
-                        TextContent(request.toString()),
-                    ),
-            )
-        },
+      name = "SetVibeArrayRequest",
+      description = "Set the vibe arrays",
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe_array" to JsonPrimitive("vibe_array"))), required = listOf("vibe_array")),
+      handler = { request ->
+        val response = client.SetVibeArray(Json.decodeFromString<SetVibeArrayRequest>(request.toString()))
+        CallToolResult(
+            content =
+              listOf(
+                TextContent(response.toString()),
+              ),
+        )
+      },
     )
-    return client.SetVibeArray(request)
+    mcpServer.addResource(
+      uri = "proto://SetVibeArrayRequest",
+      name = "SetVibeArrayRequest",
+      description = "Protocol buffer message for SetVibeArrayRequest",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeArrayRequest resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
+    mcpServer.addResource(
+      uri = "proto://SetVibeArrayResponse",
+      name = "SetVibeArrayResponse",
+      description = "Protocol buffer message for SetVibeArrayResponse",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeArrayResponse resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
   }
 
   /**
    * Set multiple vibe objects
    */
-  override suspend fun SetVibeObjects(request: SetVibeObjectsRequest): SetVibeObjectsResponse {
+  override fun SetVibeObjectsHandler() {
     mcpServer.addTool(
-        name = "SetVibeObjectsRequest",
-        description = "Set multiple vibe objects",
-        inputSchema = Tool.Input(JsonObject(mapOf("vibe_object" to JsonPrimitive("vibe_object"))), required = listOf("vibe_object")),
-        handler = { request ->
-            CallToolResult(
-                content =
-                    listOf(
-                        TextContent(request.toString()),
-                    ),
-            )
-        },
+      name = "SetVibeObjectsRequest",
+      description = "Set multiple vibe objects",
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe_object" to JsonPrimitive("vibe_object"))), required = listOf("vibe_object")),
+      handler = { request ->
+        val response = client.SetVibeObjects(Json.decodeFromString<SetVibeObjectsRequest>(request.toString()))
+        CallToolResult(
+            content =
+              listOf(
+                TextContent(response.toString()),
+              ),
+        )
+      },
     )
-    return client.SetVibeObjects(request)
+    mcpServer.addResource(
+      uri = "proto://SetVibeObjectsRequest",
+      name = "SetVibeObjectsRequest",
+      description = "Protocol buffer message for SetVibeObjectsRequest",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeObjectsRequest resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
+    mcpServer.addResource(
+      uri = "proto://SetVibeObjectsResponse",
+      name = "SetVibeObjectsResponse",
+      description = "Protocol buffer message for SetVibeObjectsResponse",
+      mimeType = "application/json"
+    ) { request ->
+      ReadResourceResult(
+        contents =
+          listOf(
+            TextResourceContents(
+              text = "This is the SetVibeObjectsResponse resource.",
+              uri = request.uri,
+              mimeType = "application/json",
+            ),
+        ),
+      )
+    }
   }
 }

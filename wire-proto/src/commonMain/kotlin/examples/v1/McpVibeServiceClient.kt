@@ -14,32 +14,34 @@ package examples.v1
  *   - Indented item 2
  */
 public interface McpVibeServiceClient {
+  public fun VibeServiceSetup()
+
   /**
    * This is a block comment
    * with multiple lines
    * to test block handling
    * "Hello World"
    */
-  public suspend fun SetVibe(request: SetVibeRequest): SetVibeResponse
+  public fun SetVibeHandler()
 
   /**
    * Get Vibe
    * of the server
    */
-  public suspend fun GetVibe(request: GetVibeRequest): GetVibeResponse
+  public fun GetVibeHandler()
 
   /**
    * Set vibe details
    */
-  public suspend fun SetVibeDetails(request: SetVibeDetailsRequest): SetVibeResponse
+  public fun SetVibeDetailsHandler()
 
   /**
    * Set the vibe arrays
    */
-  public suspend fun SetVibeArray(request: SetVibeArrayRequest): SetVibeArrayResponse
+  public fun SetVibeArrayHandler()
 
   /**
    * Set multiple vibe objects
    */
-  public suspend fun SetVibeObjects(request: SetVibeObjectsRequest): SetVibeObjectsResponse
+  public fun SetVibeObjectsHandler()
 }

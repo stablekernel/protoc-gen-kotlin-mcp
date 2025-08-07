@@ -53,15 +53,10 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.buildCodeBlock
 import com.squareup.kotlinpoet.joinToCode
-import com.squareup.kotlinpoet.tag
 import com.squareup.wire.EnumAdapter
 import com.squareup.wire.FieldEncoding
-import com.squareup.wire.GrpcCall
 import com.squareup.wire.GrpcClient
-import com.squareup.wire.GrpcClientStreamingCall
 import com.squareup.wire.GrpcMethod
-import com.squareup.wire.GrpcServerStreamingCall
-import com.squareup.wire.GrpcStreamingCall
 import com.squareup.wire.Message
 import com.squareup.wire.MessageSink
 import com.squareup.wire.MessageSource
@@ -118,18 +113,19 @@ import com.squareup.wire.schema.internal.legacyQualifiedFieldName
 import com.squareup.wire.schema.internal.optionValueToInt
 import com.squareup.wire.schema.internal.optionValueToLong
 import io.modelcontextprotocol.kotlin.sdk.CallToolResult
+import io.modelcontextprotocol.kotlin.sdk.ReadResourceResult
 import io.modelcontextprotocol.kotlin.sdk.TextContent
+import io.modelcontextprotocol.kotlin.sdk.TextResourceContents
 import io.modelcontextprotocol.kotlin.sdk.Tool
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import java.util.Locale
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import okio.ByteString
 import okio.ByteString.Companion.encode
-import kotlin.reflect.full.primaryConstructor
-import kotlin.reflect.full.valueParameters
 
 class KotlinGenerator private constructor(
     val schema: Schema,
@@ -285,6 +281,30 @@ class KotlinGenerator private constructor(
         return typeName.peerClass(simpleName)
     }
 
+    /**
+     * Returns the full name of the class generated for [service]#[rpc]. This returns a name like
+     * `RouteGuideClient` or `RouteGuideGetFeatureBlockingServer`.
+     */
+    fun generatedMCPServerName(
+        service: Service,
+        rpc: Rpc? = null,
+        isImplementation: Boolean = false,
+    ): ClassName {
+        val typeName = service.serviceName as ClassName
+        val simpleName = buildString {
+            append("Mcp")
+            append(typeName.simpleName)
+            if (rpc != null) {
+                append(rpc.name)
+            }
+            append("Server")
+            if (isImplementation) {
+                append("Impl")
+            }
+        }
+        return typeName.peerClass(simpleName)
+    }
+
     private val serviceNameSuffix: String
         get() {
             // nameSuffix, if given, overrides both call-style and rpc-role suffixes.
@@ -419,6 +439,7 @@ class KotlinGenerator private constructor(
         val interfaceName = generatedMCPServiceName(service, onlyRpc, isImplementation = false)
         val implementationName = generatedMCPServiceName(service, onlyRpc, isImplementation = true)
         val grpcImplementationName = generatedServiceName(service, onlyRpc, isImplementation = true)
+        val mcpServerName = generatedMCPServerName(service, onlyRpc, isImplementation = false)
         val builder = if (!isImplementation) {
             TypeSpec.interfaceBuilder(interfaceName)
         } else {
@@ -454,20 +475,74 @@ class KotlinGenerator private constructor(
             }
 
         val rpcs = if (onlyRpc == null) service.rpcs else listOf(onlyRpc)
+        builder.addFunction(
+            generateMcpSetupAllFunction(
+                rpcs,
+                service.name,
+                isImplementation,
+            )
+        )
         for (rpc in rpcs) {
             builder.addFunction(
-                generateMcpFunction(
+                generateMcpHandlerFunction(
                     rpc,
-                    service.name,
                     service.type.enclosingTypeOrPackage,
                     isImplementation,
-                    service,
                 ),
             )
         }
 
         val key = if (isImplementation) implementationName else interfaceName
         return key to builder.build()
+    }
+
+    private fun generateMcpSetup(
+        service: Service,
+        onlyRpc: Rpc?,
+        isImplementation: Boolean,
+    ): Pair<ClassName, TypeSpec> {
+        check(rpcRole == RpcRole.CLIENT || !isImplementation) {
+            "only clients may generate implementations"
+        }
+        val interfaceName = generatedMCPServiceName(service, onlyRpc, isImplementation = false)
+        val implementationName = generatedMCPServiceName(service, onlyRpc, isImplementation = true)
+        val mcpServerName = generatedMCPServerName(service, onlyRpc, isImplementation = false)
+        val builder =
+            TypeSpec.classBuilder(mcpServerName)
+                .primaryConstructor(
+                    FunSpec.constructorBuilder()
+                        .build()
+                )
+        builder
+            .apply {
+                if (service.documentation.isNotBlank()) {
+                    addKdoc("%L\n", service.documentation.sanitizeKdoc())
+                }
+                if (!isImplementation) {
+                    for (annotation in optionAnnotations(service.options)) {
+                        addAnnotation(annotation)
+                    }
+                }
+            }
+
+        val rpcs = if (onlyRpc == null) service.rpcs else listOf(onlyRpc)
+        builder.addFunction(
+            generateMcpSetupAllFunction(
+                rpcs,
+                service.name,
+                isImplementation,
+            )
+        )
+        for (rpc in rpcs) {
+            builder.addFunction(
+                generateMcpHandlerFunction(
+                    rpc,
+                    service.type.enclosingTypeOrPackage,
+                    isImplementation,
+                ),
+            )
+        }
+        return mcpServerName to builder.build()
     }
 
     private fun generateRpcFunction(
@@ -597,15 +672,13 @@ class KotlinGenerator private constructor(
         return funSpecBuilder.build()
     }
 
-    private fun generateMcpFunction(
+    private fun generateMcpHandlerFunction(
         rpc: Rpc,
-        serviceName: String,
         servicePackageName: String?,
         isImplementation: Boolean,
-        service: Service,
     ): FunSpec {
         val packageName = if (servicePackageName.isNullOrBlank()) "" else "$servicePackageName."
-        val funSpecBuilder = FunSpec.builder(rpc.name)
+        val funSpecBuilder = FunSpec.builder(rpc.name + "Handler")
             .apply {
                 if (rpc.documentation.isNotBlank()) {
                     addKdoc("%L\n", rpc.documentation.sanitizeKdoc())
@@ -626,28 +699,6 @@ class KotlinGenerator private constructor(
                 .addParameter("request", requestType)
             if (rpcCallStyle == RpcCallStyle.SUSPENDING) {
                 funSpecBuilder.addModifiers(KModifier.SUSPEND)
-            }
-            when {
-                rpc.bidirectionalStreaming -> {
-                    funSpecBuilder
-                        .addParameter("request", readableStreamOf(requestType))
-                        .addParameter("response", writableStreamOf(responseType))
-                }
-                rpc.clientStreaming -> {
-                    funSpecBuilder
-                        .addParameter("request", readableStreamOf(requestType))
-                        .returns(responseType)
-                }
-                rpc.serverStreaming -> {
-                    funSpecBuilder
-                        .addParameter("request", requestType)
-                        .addParameter("response", writableStreamOf(responseType))
-                }
-                else -> {
-                    funSpecBuilder
-                        .addParameter("request", requestType)
-                        .returns(responseType)
-                }
             }
         } else {
             val grpcMethod = CodeBlock.builder()
@@ -675,90 +726,114 @@ class KotlinGenerator private constructor(
                 }
             }
             val requiredParamsMethod = requiredParams.build()
-            funSpecBuilder.addModifiers(KModifier.SUSPEND)
-            when {
-                // if explicitStreamingCalls is false use the GrpcStreamingCall for every streaming call (legacy).
-                // Otherwise, use it just for bidirectional streaming.
-                (rpc.streaming && !explicitStreamingCalls) || rpc.bidirectionalStreaming -> {
-                    funSpecBuilder
-                        .addParameter("request", requestType)
-                        .returns(
-                            responseType
-                        )
-                    if (isImplementation) {
-                        funSpecBuilder
-                            .addModifiers(OVERRIDE)
-                            .addCode("return client.%L(%L)", rpc.name, grpcMethod)
-                    } else {
-                        funSpecBuilder.addModifiers(ABSTRACT)
-                    }
-                }
-                rpc.clientStreaming -> {
-                    funSpecBuilder
-                        .addParameter("request", requestType)
-                        .returns(
-                            responseType
-                        )
-                    if (isImplementation) {
-                        funSpecBuilder
-                            .addModifiers(OVERRIDE)
-                            .addStatement("return client.%L(%L)", rpc.name, grpcMethod)
-                    } else {
-                        funSpecBuilder.addModifiers(ABSTRACT)
-                    }
-                }
-                rpc.serverStreaming -> {
-                    funSpecBuilder
-                        .addParameter("request", requestType)
-                        .returns(
-                            responseType
-                        )
-                    if (isImplementation) {
-                        funSpecBuilder
-                            .addModifiers(OVERRIDE)
-                            .addStatement("return client.%L(%L)", rpc.name, grpcMethod)
-                    } else {
-                        funSpecBuilder.addModifiers(ABSTRACT)
-                    }
-                }
+            if (isImplementation) {
+                funSpecBuilder
+                    .addModifiers(OVERRIDE)
+                    .addCode("mcpServer.addTool(\n" +
+                            "  name = \"%L\",\n" +
+                            "  description = \"%L\",\n" +
+                            "  inputSchema = %T(%T(mapOf(%L)), required = listOf(%L)),\n" +
+                            "  handler = { request ->\n" +
+                            "    val response = client.%L(%T.decodeFromString<%T>(request.toString()))\n" +
+                            "    %T(\n" +
+                            "        content =\n" +
+                            "          listOf(\n" +
+                            "            %T(response.toString()),\n" +
+                            "          ),\n" +
+                            "    )\n" +
+                            "  },\n" +
+                            ")\n" +
+                            "mcpServer.addResource(\n" +
+                            "  uri = \"proto://%L\",\n" +
+                            "  name = \"%L\",\n" +
+                            "  description = \"Protocol buffer message for %L\",\n" +
+                            "  mimeType = \"application/json\"\n" +
+                            ") { request ->\n" +
+                            "  %T(\n" +
+                            "    contents =\n" +
+                            "      listOf(\n" +
+                            "        %T(\n" +
+                            "          text = \"This is the %L resource.\",\n" +
+                            "          uri = request.uri,\n" +
+                            "          mimeType = \"application/json\",\n" +
+                            "        ),\n" +
+                            "    ),\n" +
+                            "  )\n" +
+                            "}\n" +
+                            "mcpServer.addResource(\n" +
+                            "  uri = \"proto://%L\",\n" +
+                            "  name = \"%L\",\n" +
+                            "  description = \"Protocol buffer message for %L\",\n" +
+                            "  mimeType = \"application/json\"\n" +
+                            ") { request ->\n" +
+                            "  %T(\n" +
+                            "    contents =\n" +
+                            "      listOf(\n" +
+                            "        %T(\n" +
+                            "          text = \"This is the %L resource.\",\n" +
+                            "          uri = request.uri,\n" +
+                            "          mimeType = \"application/json\",\n" +
+                            "        ),\n" +
+                            "    ),\n" +
+                            "  )\n" +
+                            "}",
+                        rpc.name + "Request",
+                        rpc.documentation.sanitizeKdoc().replace("\n", " ").replace("\"", "\\\""),
+                        Tool.Input::class,
+                        JsonObject::class,
+                        parametersMethod,
+                        requiredParamsMethod,
+                        rpc.name,
+                        Json::class,
+                        requestType,
+                        CallToolResult::class,
+                        TextContent::class,
+                        rpc.name + "Request",
+                        rpc.name + "Request",
+                        rpc.name + "Request",
+                        ReadResourceResult::class,
+                        TextResourceContents::class,
+                        rpc.name + "Request",
+                        rpc.name + "Response",
+                        rpc.name + "Response",
+                        rpc.name + "Response",
+                        ReadResourceResult::class,
+                        TextResourceContents::class,
+                        rpc.name + "Response",
+                    )
+            } else {
+                funSpecBuilder.addModifiers(ABSTRACT)
+            }
+        }
 
-                else -> {
-                    funSpecBuilder
-                        .addParameter("request", requestType)
-                        .returns(
-                            responseType
-                        )
-                    if (isImplementation) {
-                        funSpecBuilder
-                            .addModifiers(OVERRIDE)
-                            .addCode("mcpServer.addTool(\n" +
-                                    "    name = \"%L\",\n" +
-                                    "    description = \"%L\",\n" +
-                                    "    inputSchema = %T(%T(mapOf(%L)), required = listOf(%L)),\n" +
-                                    "    handler = { request ->\n" +
-                                    "        %T(\n" +
-                                    "            content =\n" +
-                                    "                listOf(\n" +
-                                    "                    %T(request.toString()),\n" +
-                                    "                ),\n" +
-                                    "        )\n" +
-                                    "    },\n" +
-                                    ")\nreturn client.%L(%L)",
-                                rpc.name + "Request",
-                                rpc.documentation.sanitizeKdoc().replace("\n", " ").replace("\"", "\\\""),
-                                Tool.Input::class,
-                                JsonObject::class,
-                                parametersMethod,
-                                requiredParamsMethod,
-                                CallToolResult::class,
-                                TextContent::class,
-                                rpc.name,
-                                grpcMethod
-                            )
-                    } else {
-                        funSpecBuilder.addModifiers(ABSTRACT)
-                    }
-                }
+        return funSpecBuilder.build()
+    }
+
+    private fun generateMcpSetupAllFunction(
+        rpcs: List<Rpc>,
+        serviceName: String,
+        isImplementation: Boolean,
+    ): FunSpec {
+        val funSpecBuilder = FunSpec.builder(serviceName + "Setup")
+
+        if (rpcRole == RpcRole.SERVER) {
+            funSpecBuilder
+                .addModifiers(ABSTRACT)
+            if (rpcCallStyle == RpcCallStyle.SUSPENDING) {
+                funSpecBuilder.addModifiers(KModifier.SUSPEND)
+            }
+        } else {
+            val parameters = CodeBlock.builder()
+            rpcs.forEach {
+                parameters.add("%LHandler()\n", it.name)
+            }
+            val parametersMethod = parameters.build()
+            if (isImplementation) {
+                funSpecBuilder
+                    .addModifiers(OVERRIDE)
+                    .addCode("%L", parametersMethod)
+            } else {
+                funSpecBuilder.addModifiers(ABSTRACT)
             }
         }
 
