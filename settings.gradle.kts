@@ -15,6 +15,6 @@ include(
     "mcp-server",
     "wire-compiler",
     "wire-kotlin-generator",
-    "wire-proto",
+    "mcp-proto",
 )
 rootProject.name = "protoc-gen-kotlin-mcp"

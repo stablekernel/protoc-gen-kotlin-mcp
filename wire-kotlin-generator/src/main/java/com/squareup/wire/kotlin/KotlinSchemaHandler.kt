@@ -97,6 +97,7 @@ class KotlinSchemaHandler(
 
         val typeSpec = kotlinGenerator.generateType(type)
         val className = kotlinGenerator.generatedTypeName(type)
+
         return write(className, typeSpec, type.type, type.location, context)
     }
 
@@ -116,12 +117,20 @@ class KotlinSchemaHandler(
                         write(className, typeSpec, service.type, service.location, context),
                     )
                 }
+                val (className, fileSpec) = kotlinGenerator.generateMcpSetup(service, rpc, isImplementation = true)
+                generatedPaths.add(
+                    write(className, fileSpec, service.type, service.location, context),
+                )
             }
         } else {
             val map = kotlinGenerator.generateServiceTypeSpecs(service, null)
             for ((className, typeSpec) in map) {
                 generatedPaths.add(write(className, typeSpec, service.type, service.location, context))
             }
+            val (className, fileSpec) = kotlinGenerator.generateMcpSetup(service, null, isImplementation = true)
+            generatedPaths.add(
+                write(className, fileSpec, service.type, service.location, context),
+            )
         }
         return generatedPaths
     }
@@ -151,6 +160,7 @@ class KotlinSchemaHandler(
                 // If a file contains deprecation, we don't want to pollute the consumer's logs with something
                 // they might not be able to control.
                 .addType(typeSpec)
+                .addImport("okio.ByteString.Companion", "toByteString")
                 .build()
         val filePath =
             modulePath /
@@ -160,6 +170,36 @@ class KotlinSchemaHandler(
         context.logger.artifactHandled(
             modulePath,
             "${kotlinFile.packageName}.${(kotlinFile.members.first() as TypeSpec).name}",
+            "Kotlin",
+        )
+        try {
+            context.fileSystem.createDirectories(filePath.parent!!)
+            context.fileSystem.write(filePath) {
+                writeUtf8(kotlinFile.toString())
+            }
+        } catch (e: IOException) {
+            throw IOException("Error emitting ${kotlinFile.packageName}.$source to $outDirectory", e)
+        }
+        return filePath
+    }
+
+    private fun write(
+        name: ClassName,
+        typeSpec: FileSpec,
+        source: Any,
+        location: Location,
+        context: Context,
+    ): Path {
+        val modulePath = context.outDirectory
+        val kotlinFile = typeSpec
+        val filePath =
+            modulePath /
+                kotlinFile.packageName.replace(".", "/") /
+                "${kotlinFile.name}.kt"
+
+        context.logger.artifactHandled(
+            modulePath,
+            "$name",
             "Kotlin",
         )
         try {

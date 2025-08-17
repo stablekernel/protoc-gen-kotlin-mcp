@@ -21,4 +21,7 @@ dependencies {
     implementation(libs.kotlinpoet)
     implementation(libs.okio)
     implementation(libs.mcp.kotlin)
+    implementation(libs.bundles.ktor.server)
+    implementation(libs.bundles.ktor.client)
+    implementation(libs.ktor.server.core)
 }

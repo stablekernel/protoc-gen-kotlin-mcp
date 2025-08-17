@@ -18,14 +18,10 @@ fun main() {
             ),
         )
     embeddedServer(GRpc, configure = {
-        port = 2349
+        port = 2345
         serverConfigurer = {
             addService(
-                VibeService(
-                    client = client,
-                    coroutineScope = coroutineScope,
-                    clientUrlString = "http://localhost:2345",
-                ),
+                VibeService(),
             )
         }
     }) {

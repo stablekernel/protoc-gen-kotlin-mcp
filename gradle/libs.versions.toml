@@ -1,4 +1,5 @@
 [versions]
+bouncy-castle = "1.78"
 charles-kml = "0.73.0"
 detekt = "1.23.8"
 grpc = "1.69.0"
@@ -21,6 +22,8 @@ protobuf = "0.9.4"
 wire = "5.3.3"
 
 [libraries]
+bouncy-castle-ssl = { group = "org.bouncycastle", name = "bcpkix-jdk18on", version.ref = "bouncy-castle" }
+bouncy-castle = { group = "org.bouncycastle", name = "bcprov-jdk18on", version.ref = "bouncy-castle" }
 charles-kaml = { group = "com.charleskorn.kaml", name = "kaml", version.ref = "charles-kml" }
 grpc-netty = { module = "io.grpc:grpc-netty", version.ref = "grpc" }
 grpc-protobuf = { module = "io.grpc:grpc-protobuf", version.ref = "grpc" }
@@ -41,7 +44,8 @@ ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref =
 ktor-client-resources = { group = "io.ktor", name = "ktor-client-resources", version.ref = "ktor" }
 ktor-server-auth = { group = "io.ktor", name = "ktor-server-auth", version.ref = "ktor" }
 ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
-ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
+ktor-server-core = { group = "io.ktor", name = "ktor-server-cio", version.ref = "ktor" }
+ktor-server-cio = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
 ktor-server-cors = { group = "io.ktor", name = "ktor-server-cors", version.ref = "ktor" }
 ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
 ktor-server-request-validation = {group = "io.ktor", name = "ktor-server-request-validation", version.ref = "ktor" }
@@ -51,6 +55,7 @@ ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", 
 kotlinx-grpc = { module = "org.jetbrains.kotlinx:kotlinx-rpc-grpc-core", version.ref = "kotlinx-grpc"}
 logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logback" }
 mcp-kotlin = { module = "io.modelcontextprotocol:kotlin-sdk", version.ref = "mcp" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okio" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 wire-java-generator = { group = "com.squareup.wire", name = "wire-java-generator", version.ref = "wire" }
@@ -82,6 +87,7 @@ ktor-client = [
 ]
 ktor-server = [
   "ktor-server-auth",
+  "ktor-server-cio",
   "ktor-server-core",
   "ktor-server-cors",
   "ktor-server-netty",
