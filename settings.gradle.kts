@@ -12,7 +12,6 @@ plugins {
 }
 include(
     "grpc-server",
-    "mcp-server",
     "wire-compiler",
     "wire-kotlin-generator",
     "mcp-proto",
