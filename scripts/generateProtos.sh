@@ -21,7 +21,7 @@ export PATH=${current_dir}:$PATH
 rm -r mcp-proto/src/commonMain/kotlin
 ./gradlew :wire-compiler:run \
   --quiet \
-  --args='--kotlin_out=../mcp-proto/src/main/kotlin --proto_path=../grpc-server/src/main/proto --kotlin_rpc_call_style=suspending'
+  --args='--kotlin_out=../mcp-proto/src/main/kotlin --proto_path=../protos --kotlin_rpc_call_style=suspending'
 if [ $? -ne 0 ]; then
   echo "Failed to generate Wire protos"
   exit $?
