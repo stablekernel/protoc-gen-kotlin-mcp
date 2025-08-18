@@ -1,7 +1,7 @@
 plugins {
-    `kotlin-dsl`
     kotlin("jvm") version "2.1.20"
     id ("com.google.protobuf") version "0.9.4"
+    id (libs.plugins.serialization.get().pluginId) version "2.1.20"
 }
 
 group = "com.stablekernel"
@@ -9,6 +9,8 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    google()
+    maven("https://plugins.gradle.org/m2/")
 }
 
 dependencies {

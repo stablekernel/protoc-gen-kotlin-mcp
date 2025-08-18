@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.grpc.stub)
     implementation(libs.grpc.services)
     implementation(libs.kotlinx.grpc)
+    implementation(libs.mcp.kotlin)
 }
 
 testing {
@@ -72,17 +73,23 @@ protobuf {
                 id("grpc")
                 id("grpckt")
             }
+            it.builtins {
+                id("kotlin")
+            }
         }
     }
 }
 
 sourceSets {
     main {
-        java {
+        kotlin {
             srcDir("src/main/kotlin")
+            srcDir("build/generated/source/proto/main/kotlin")
+            srcDir("build/generated/source/proto/main/grpckt")
+        }
+        java {
             srcDir("build/generated/source/proto/main/grpc")
             srcDir("build/generated/source/proto/main/java")
-            srcDir("build/generated/source/proto/main/grpckt")
         }
     }
 }
