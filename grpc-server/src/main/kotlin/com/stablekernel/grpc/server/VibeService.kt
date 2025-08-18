@@ -1,7 +1,14 @@
 package com.stablekernel.grpc.server
 
-import com.google.protobuf.kotlin.set
-import examples.v1.Example.*
+import examples.v1.Example.GetVibeRequest
+import examples.v1.Example.GetVibeResponse
+import examples.v1.Example.SetVibeArrayRequest
+import examples.v1.Example.SetVibeArrayResponse
+import examples.v1.Example.SetVibeDetailsRequest
+import examples.v1.Example.SetVibeObjectsRequest
+import examples.v1.Example.SetVibeObjectsResponse
+import examples.v1.Example.SetVibeRequest
+import examples.v1.Example.SetVibeResponse
 import examples.v1.VibeServiceGrpcKt
 
 class VibeService() : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
@@ -13,7 +20,7 @@ class VibeService() : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
         return response
     }
 
-    override suspend fun getVibe(request: examples.v1.Example.GetVibeRequest): GetVibeResponse {
+    override suspend fun getVibe(request: GetVibeRequest): GetVibeResponse {
         return GetVibeResponse.newBuilder().setVibe(previousVibe).build()
     }
 
