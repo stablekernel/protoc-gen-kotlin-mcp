@@ -879,30 +879,85 @@ class KotlinGenerator private constructor(
                             }
                         }
                     } else if (field.type?.isMessage == true) {
-                        responseParams.add("%T(", TextContent::class)
+                        responseParams.add("%T(\"{ \" + ", TextContent::class)
                         schema.getType(packageName + field.jsonName?.capitalize())?.let { type ->
                             (type as MessageType).declaredFields.forEachIndexed { index2, field2 ->
                                 if (index2 >= type.declaredFields.size - 1) {
-                                    responseParams.add(
-                                        "response.%N?.%N.toString()",
-                                        field.name,
-                                        field2.name
-                                    )
+                                    if (field.acceptsNull) {
+                                        if (field2.acceptsNull) {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N?.toString() + \"\\\"\"",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        } else {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N.toString() + \"\\\"\"",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        }
+                                    } else {
+                                        if (field2.acceptsNull) {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" + response.%N.%N?.toString() + \"\\\"\"",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        } else {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" response.%N.%N.toString() + \"\\\"\"",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        }
+                                    }
                                 } else {
-                                    responseParams.add(
-                                        "response.%N?.%N.toString() + ",
-                                        field.name,
-                                        field2.name
-                                    )
+                                    if (field.acceptsNull) {
+                                        if (field2.acceptsNull) {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N?.toString() + \"\\\", \" + ",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        } else {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N.toString() + \"\\\", \" + ",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        }
+                                    } else {
+                                        if (field2.acceptsNull) {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" + response.%N.%N?.toString() + \"\\\", \" + ",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        } else {
+                                            responseParams.add(
+                                                "\"\\\"%N\\\":\" + \"\\\"\" response.%N.%N.toString() + \"\\\", \" + ",
+                                                field2.name,
+                                                field.name,
+                                                field2.name
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                         if (index >= it.declaredFields.size -1) {
-                            responseParams.add(")\n")
+                            responseParams.add(" + \" }\")\n")
                         } else {
-                            responseParams.add("),\n")
+                            responseParams.add(" + \" }\"),\n")
                         }
-
                     } else {
                         if (index >= it.declaredFields.size - 1) {
                             responseParams.add("%T(response.%N.toString())\n", TextContent::class, field.name)
