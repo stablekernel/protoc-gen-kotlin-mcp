@@ -51,11 +51,11 @@ class GrpcVibeServiceClient(
   /**
    * Set vibe details
    */
-  override suspend fun SetVibeDetails(request: SetVibeDetailsRequest): SetVibeResponse {
+  override suspend fun SetVibeDetails(request: SetVibeDetailsRequest): SetVibeDetailsResponse {
     val call = client.newCall(GrpcMethod(
         path = "/examples.v1.VibeService/SetVibeDetails",
         requestAdapter = SetVibeDetailsRequest.ADAPTER,
-        responseAdapter = SetVibeResponse.ADAPTER
+        responseAdapter = SetVibeDetailsResponse.ADAPTER
     ))
     return call.execute(request)
   }

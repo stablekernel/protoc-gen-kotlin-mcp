@@ -131,6 +131,7 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.OkHttpClient
@@ -773,10 +774,40 @@ class KotlinGenerator private constructor(
             val parameters = CodeBlock.builder()
             schema.getType(packageName + rpc.name + "Request")?.let {
                 (it as MessageType).declaredFields.forEachIndexed { index, field ->
-                    if (index >= it.declaredFields.size - 1) {
-                        parameters.add("\"%L\" to %T(\"%L\")", field.name, JsonPrimitive::class, field.name)
+                    if (field.isRepeated) {
+                        if (index >= it.declaredFields.size - 1) {
+                            parameters.add("\"%L\" to %T(listOf())", field.name, JsonArray::class)
+                        } else {
+                            parameters.add("\"%L\" to %T(listOf()), ", field.name, JsonArray::class)
+                        }
+                    } else if (field.type?.isMessage == true) {
+                        parameters.add("\"%L\" to %T(mapOf(", field.name, JsonObject::class)
+                        schema.getType(packageName + field.jsonName?.capitalize())?.let { type ->
+                            (type as MessageType).declaredFields.forEachIndexed { index2, field2 ->
+                                if (index2 >= type.declaredFields.size - 1) {
+                                    parameters.add(
+                                        "\"%L\" to %T(\"%L\")",
+                                        field2.name,
+                                        JsonPrimitive::class,
+                                        field2.name
+                                    )
+                                } else {
+                                    parameters.add(
+                                        "\"%L\" to %T(\"%L\"), ",
+                                        field2.name,
+                                        JsonPrimitive::class,
+                                        field2.name
+                                    )
+                                }
+                            }
+                        }
+                        parameters.add("))")
                     } else {
-                        parameters.add("\"%L\" to %T(\"%L\"), ", field.name, JsonPrimitive::class, field.name)
+                        if (index >= it.declaredFields.size - 1) {
+                            parameters.add("\"%L\" to %T(\"%L\")", field.name, JsonPrimitive::class, field.name)
+                        } else {
+                            parameters.add("\"%L\" to %T(\"%L\"), ", field.name, JsonPrimitive::class, field.name)
+                        }
                     }
                 }
             }
@@ -795,10 +826,89 @@ class KotlinGenerator private constructor(
             val responseParams = CodeBlock.builder()
             schema.getType(packageName + rpc.name + "Response")?.let {
                 (it as MessageType).declaredFields.forEachIndexed { index, field ->
-                    if (index >= it.declaredFields.size - 1) {
-                        responseParams.add("%T(response.%N.toString())\n", TextContent::class, field.name)
+                    if (field.isRepeated) {
+                        if (field.type?.isMessage == true) {
+                            responseParams.add("%T(response.%N.map { ", TextContent::class, field.name)
+                            schema.getType(packageName + field.jsonName?.capitalize())?.let { type ->
+                                (type as MessageType).declaredFields.forEachIndexed { index2, field2 ->
+                                    if (index2 >= type.declaredFields.size - 1 && index2 == 0) {
+                                        responseParams.add(
+                                            "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\"",
+                                            field2.name,
+                                            field2.name
+                                        )
+                                    } else if (index2 >= type.declaredFields.size - 1 && index2 == 0) {
+                                        responseParams.add(
+                                            "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\"",
+                                            field2.name,
+                                            field2.name
+                                        )
+                                    } else if (index2 == 0) {
+                                        responseParams.add(
+                                            "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\" + \", \" + ",
+                                            field2.name,
+                                            field2.name
+                                        )
+                                    } else {
+                                        responseParams.add(
+                                            "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\" + \", \" + ",
+                                            field2.name,
+                                            field2.name
+                                        )
+                                    }
+                                }
+                            }
+                            if (index >= it.declaredFields.size -1) {
+                                responseParams.add(" }.joinToString(prefix = \"{\", postfix = \"}\"))\n")
+                            } else {
+                                responseParams.add(" }.joinToString(prefix = \"{\", postfix = \"}\")),\n")
+                            }
+                        } else {
+                            if (index >= it.declaredFields.size - 1) {
+                                responseParams.add(
+                                    "%T(response.%N.joinToString())\n",
+                                    TextContent::class,
+                                    field.name
+                                )
+                            } else {
+                                responseParams.add(
+                                    "%T(response.%N.joinToString()),\n",
+                                    TextContent::class,
+                                    field.name
+                                )
+                            }
+                        }
+                    } else if (field.type?.isMessage == true) {
+                        responseParams.add("%T(", TextContent::class)
+                        schema.getType(packageName + field.jsonName?.capitalize())?.let { type ->
+                            (type as MessageType).declaredFields.forEachIndexed { index2, field2 ->
+                                if (index2 >= type.declaredFields.size - 1) {
+                                    responseParams.add(
+                                        "response.%N?.%N.toString()",
+                                        field.name,
+                                        field2.name
+                                    )
+                                } else {
+                                    responseParams.add(
+                                        "response.%N?.%N.toString() + ",
+                                        field.name,
+                                        field2.name
+                                    )
+                                }
+                            }
+                        }
+                        if (index >= it.declaredFields.size -1) {
+                            responseParams.add(")\n")
+                        } else {
+                            responseParams.add("),\n")
+                        }
+
                     } else {
-                        responseParams.add("%T(response.%N.toString()),\n", TextContent::class, field.name)
+                        if (index >= it.declaredFields.size - 1) {
+                            responseParams.add("%T(response.%N.toString())\n", TextContent::class, field.name)
+                        } else {
+                            responseParams.add("%T(response.%N.toString()),\n", TextContent::class, field.name)
+                        }
                     }
                 }
             }

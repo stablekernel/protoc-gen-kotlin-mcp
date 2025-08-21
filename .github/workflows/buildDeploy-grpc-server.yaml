@@ -41,7 +41,7 @@ jobs:
         env:
         run: |
           ./gradlew clean ktlintCheck
-          ./gradlew generateProto
+          ./gradlew grpc-server:generateProto
           ./scripts/generateProtos.sh
           ./gradlew buildFatJar -Pversion=${{ github.event.inputs.version }}
 

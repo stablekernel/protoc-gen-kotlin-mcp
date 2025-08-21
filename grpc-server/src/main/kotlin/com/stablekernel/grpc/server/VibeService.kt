@@ -4,6 +4,7 @@ import examples.v1.Example.GetVibeRequest
 import examples.v1.Example.GetVibeResponse
 import examples.v1.Example.SetVibeArrayRequest
 import examples.v1.Example.SetVibeArrayResponse
+import examples.v1.Example.SetVibeDetailsResponse
 import examples.v1.Example.SetVibeDetailsRequest
 import examples.v1.Example.SetVibeObjectsRequest
 import examples.v1.Example.SetVibeObjectsResponse
@@ -24,8 +25,8 @@ class VibeService() : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
         return GetVibeResponse.newBuilder().setVibe(previousVibe).build()
     }
 
-    override suspend fun setVibeDetails(request: SetVibeDetailsRequest): SetVibeResponse {
-        val response = SetVibeResponse.newBuilder().setVibe(request.vibe).setPreviousVibe(previousVibe).build()
+    override suspend fun setVibeDetails(request: SetVibeDetailsRequest): SetVibeDetailsResponse {
+        val response = SetVibeDetailsResponse.newBuilder().setVibe(request.vibe).setPreviousVibe(previousVibe).build()
         previousVibe = request.vibe
         return response
     }

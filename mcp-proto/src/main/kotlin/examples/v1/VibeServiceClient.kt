@@ -34,7 +34,7 @@ interface VibeServiceClient : Service {
   /**
    * Set vibe details
    */
-  suspend fun SetVibeDetails(request: SetVibeDetailsRequest): SetVibeResponse
+  suspend fun SetVibeDetails(request: SetVibeDetailsRequest): SetVibeDetailsResponse
 
   /**
    * Set the vibe arrays

@@ -26,14 +26,14 @@ import okio.ByteString.Companion.toByteString
 class SetVibeObjectsResponse(
   @field:WireField(
     tag = 1,
-    adapter = "examples.v1.SomeVibeObject#ADAPTER",
+    adapter = "examples.v1.VibeObject#ADAPTER",
     label = WireField.Label.REPEATED,
     jsonName = "vibeObject",
     schemaIndex = 0,
   )
-  val vibe_object: List<SomeVibeObject> = emptyList(),
+  val vibe_object: List<VibeObject> = emptyList(),
 ) {
-  fun copy(vibe_object: List<SomeVibeObject> = this.vibe_object): SetVibeObjectsResponse = SetVibeObjectsResponse(vibe_object)
+  fun copy(vibe_object: List<VibeObject> = this.vibe_object): SetVibeObjectsResponse = SetVibeObjectsResponse(vibe_object)
 
   companion object {
     @JvmField
@@ -48,23 +48,23 @@ class SetVibeObjectsResponse(
     ) {
       override fun encodedSize(`value`: SetVibeObjectsResponse): Int {
         var size = 0
-        size += SomeVibeObject.ADAPTER.asRepeated().encodedSizeWithTag(1, value.vibe_object)
+        size += VibeObject.ADAPTER.asRepeated().encodedSizeWithTag(1, value.vibe_object)
         return size
       }
 
       override fun encode(writer: ProtoWriter, `value`: SetVibeObjectsResponse) {
-        SomeVibeObject.ADAPTER.asRepeated().encodeWithTag(writer, 1, value.vibe_object)
+        VibeObject.ADAPTER.asRepeated().encodeWithTag(writer, 1, value.vibe_object)
       }
 
       override fun encode(writer: ReverseProtoWriter, `value`: SetVibeObjectsResponse) {
-        SomeVibeObject.ADAPTER.asRepeated().encodeWithTag(writer, 1, value.vibe_object)
+        VibeObject.ADAPTER.asRepeated().encodeWithTag(writer, 1, value.vibe_object)
       }
 
       override fun decode(reader: ProtoReader): SetVibeObjectsResponse {
-        val vibe_object = mutableListOf<SomeVibeObject>()
+        val vibe_object = mutableListOf<VibeObject>()
         val unknownFields = reader.forEachTag { tag ->
           when (tag) {
-            1 -> vibe_object.add(SomeVibeObject.ADAPTER.decode(reader))
+            1 -> vibe_object.add(VibeObject.ADAPTER.decode(reader))
             else -> reader.readUnknownField(tag)
           }
         }
@@ -75,7 +75,7 @@ class SetVibeObjectsResponse(
       }
 
       override fun redact(`value`: SetVibeObjectsResponse): SetVibeObjectsResponse = value.copy(
-        vibe_object = value.vibe_object.redactElements(SomeVibeObject.ADAPTER)
+        vibe_object = value.vibe_object.redactElements(VibeObject.ADAPTER)
       )
     }
 

@@ -9,6 +9,7 @@ import io.modelcontextprotocol.kotlin.sdk.TextResourceContents
 import io.modelcontextprotocol.kotlin.sdk.Tool
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import okio.ByteString.Companion.toByteString
@@ -156,13 +157,15 @@ class McpVibeServiceClientImpl(
     mcpServer.addTool(
       name = "SetVibeDetails",
       description = "Set vibe details",
-      inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"), "vibe_scalar" to JsonPrimitive("vibe_scalar"))), required = listOf("vibe", "vibe_scalar")),
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe" to JsonPrimitive("vibe"), "vibe_scalar" to JsonObject(mapOf("vibe_double" to JsonPrimitive("vibe_double"), "vibe_float" to JsonPrimitive("vibe_float"), "vibe_int32" to JsonPrimitive("vibe_int32"), "vibe_int64" to JsonPrimitive("vibe_int64"), "vibe_uint32" to JsonPrimitive("vibe_uint32"), "vibe_uint64" to JsonPrimitive("vibe_uint64"), "vibe_sint32" to JsonPrimitive("vibe_sint32"), "vibe_sint64" to JsonPrimitive("vibe_sint64"), "vibe_fixed32" to JsonPrimitive("vibe_fixed32"), "vibe_fixed64" to JsonPrimitive("vibe_fixed64"), "vibe_sfixed32" to JsonPrimitive("vibe_sfixed32"), "vibe_sfixed64" to JsonPrimitive("vibe_sfixed64"), "vibe_bool" to JsonPrimitive("vibe_bool"), "vibe_bytes" to JsonPrimitive("vibe_bytes"), "vibe_enum" to JsonPrimitive("vibe_enum"))))), required = listOf("vibe", "vibe_scalar")),
       handler = { request ->
         val response = client.SetVibeDetails(Json.decodeFromString<SetVibeDetailsRequest>(request.arguments.toString()))
         CallToolResult(
             content =
               listOf(
-                          ),
+                TextContent(response.previous_vibe.toString()),
+    TextContent(response.vibe.toString())
+              ),
         )
       },
     )
@@ -209,13 +212,13 @@ class McpVibeServiceClientImpl(
     mcpServer.addTool(
       name = "SetVibeArray",
       description = "Set the vibe arrays",
-      inputSchema = Tool.Input(JsonObject(mapOf("vibe_array" to JsonPrimitive("vibe_array"))), required = listOf("vibe_array")),
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe_array" to JsonObject(mapOf("vibe_doubles" to JsonPrimitive("vibe_doubles"), "vibe_floats" to JsonPrimitive("vibe_floats"), "vibe_int32s" to JsonPrimitive("vibe_int32s"), "vibe_int64s" to JsonPrimitive("vibe_int64s"), "vibe_uint32s" to JsonPrimitive("vibe_uint32s"), "vibe_uint64s" to JsonPrimitive("vibe_uint64s"), "vibe_sint32s" to JsonPrimitive("vibe_sint32s"), "vibe_sint64s" to JsonPrimitive("vibe_sint64s"), "vibe_fixed32s" to JsonPrimitive("vibe_fixed32s"), "vibe_fixed64s" to JsonPrimitive("vibe_fixed64s"), "vibe_sfixed32s" to JsonPrimitive("vibe_sfixed32s"), "vibe_sfixed64s" to JsonPrimitive("vibe_sfixed64s"), "vibe_bools" to JsonPrimitive("vibe_bools"), "vibe_byteses" to JsonPrimitive("vibe_byteses"))))), required = listOf("vibe_array")),
       handler = { request ->
         val response = client.SetVibeArray(Json.decodeFromString<SetVibeArrayRequest>(request.arguments.toString()))
         CallToolResult(
             content =
               listOf(
-                TextContent(response.vibe_array.toString())
+                TextContent(response.vibe_array?.vibe_doubles.toString() + response.vibe_array?.vibe_floats.toString() + response.vibe_array?.vibe_int32s.toString() + response.vibe_array?.vibe_int64s.toString() + response.vibe_array?.vibe_uint32s.toString() + response.vibe_array?.vibe_uint64s.toString() + response.vibe_array?.vibe_sint32s.toString() + response.vibe_array?.vibe_sint64s.toString() + response.vibe_array?.vibe_fixed32s.toString() + response.vibe_array?.vibe_fixed64s.toString() + response.vibe_array?.vibe_sfixed32s.toString() + response.vibe_array?.vibe_sfixed64s.toString() + response.vibe_array?.vibe_bools.toString() + response.vibe_array?.vibe_byteses.toString())
               ),
         )
       },
@@ -263,13 +266,13 @@ class McpVibeServiceClientImpl(
     mcpServer.addTool(
       name = "SetVibeObjects",
       description = "Set multiple vibe objects",
-      inputSchema = Tool.Input(JsonObject(mapOf("vibe_object" to JsonPrimitive("vibe_object"))), required = listOf("vibe_object")),
+      inputSchema = Tool.Input(JsonObject(mapOf("vibe_object" to JsonArray(listOf()))), required = listOf("vibe_object")),
       handler = { request ->
         val response = client.SetVibeObjects(Json.decodeFromString<SetVibeObjectsRequest>(request.arguments.toString()))
         CallToolResult(
             content =
               listOf(
-                TextContent(response.vibe_object.toString())
+                TextContent(response.vibe_object.map { "\"vibe\":" + "\"" + it.vibe.toString() + "\"" }.joinToString(prefix = "{", postfix = "}"))
               ),
         )
       },
