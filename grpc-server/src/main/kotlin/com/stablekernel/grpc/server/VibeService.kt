@@ -41,6 +41,10 @@ class VibeService() : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
         request.vibeObjectList.forEach { vibeObject ->
             response.addVibeObject(vibeObject)
         }
+        if (request.vibeObjectCount > 0)
+            previousVibe = request.vibeObjectList.last().vibe
+        else
+            println("No vibe objects found")
         return response.build()
     }
 }
