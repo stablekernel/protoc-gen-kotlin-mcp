@@ -9,16 +9,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     brew install gnu-sed
   fi
   echo "Linking gsed to ./gsed..."
-  ln -s $(which gsed) ${current_dir}/gsed
+  ln -s $(which gsed) `pwd`/gsed
 else
   # Linux host
-  if ! command -v gsed &> /dev/null; then
-    echo "Linking gsed to /usr/bin/sed..."
-    ln -s $(which sed) ${current_dir}/gsed
-  fi
+  echo "Linking gsed to /usr/bin/sed..."
+  ln -s $(which sed) `pwd`/gsed
 fi
-export PATH=${current_dir}:$PATH
-rm -r mcp-proto/src/commonMain/kotlin
+export PATH=`pwd`:$PATH
+rm -r mcp-proto/src/main/kotlin
 ./gradlew :wire-compiler:run \
   --quiet \
   --args='--kotlin_out=../mcp-proto/src/main/kotlin --proto_path=../protos --kotlin_rpc_call_style=suspending'
