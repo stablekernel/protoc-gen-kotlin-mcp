@@ -39,11 +39,12 @@ jobs:
 
       - name: Build Ktor gRPC Server and MCP Topeka Server
         env:
+          VERSION: ${{ github.event.inputs.version }}
         run: |
           ./gradlew clean ktlintCheck
           ./gradlew grpc-server:generateProto
           ./scripts/generateProtos.sh
-          ./gradlew buildFatJar -Pversion=${{ github.event.inputs.version }}
+          ./gradlew buildFatJar -Pversion=${VERSION}
 
 #      # Install Docker Compose
 #      - name: Install Docker Compose
@@ -96,8 +97,8 @@ jobs:
       - name: Create Release and Upload JAR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ github.event.inputs.version }}
         run: |
-          VERSION=${{ github.event.inputs.version }}
           TAG_NAME="v${VERSION}"
           RELEASE_NAME="$TAG_NAME"
           JAR_PATH="./grpc-server/build/libs/protoc-gen-kotlin-grpc-server-${VERSION}.jar"
