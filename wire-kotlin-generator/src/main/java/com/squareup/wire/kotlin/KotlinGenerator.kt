@@ -789,14 +789,14 @@ class KotlinGenerator private constructor(
                                         "\"%L\" to %T(\"%L\")",
                                         field2.name,
                                         JsonPrimitive::class,
-                                        field2.name
+                                        field2.name,
                                     )
                                 } else {
                                     parameters.add(
                                         "\"%L\" to %T(\"%L\"), ",
                                         field2.name,
                                         JsonPrimitive::class,
-                                        field2.name
+                                        field2.name,
                                     )
                                 }
                             }
@@ -835,30 +835,30 @@ class KotlinGenerator private constructor(
                                         responseParams.add(
                                             "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\"",
                                             field2.name,
-                                            field2.name
+                                            field2.name,
                                         )
                                     } else if (index2 >= type.declaredFields.size - 1 && index2 == 0) {
                                         responseParams.add(
                                             "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\"",
                                             field2.name,
-                                            field2.name
+                                            field2.name,
                                         )
                                     } else if (index2 == 0) {
                                         responseParams.add(
                                             "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\" + \", \" + ",
                                             field2.name,
-                                            field2.name
+                                            field2.name,
                                         )
                                     } else {
                                         responseParams.add(
                                             "\"\\\"%N\\\":\" + \"\\\"\" + it.%N.toString() + \"\\\"\" + \", \" + ",
                                             field2.name,
-                                            field2.name
+                                            field2.name,
                                         )
                                     }
                                 }
                             }
-                            if (index >= it.declaredFields.size -1) {
+                            if (index >= it.declaredFields.size - 1) {
                                 responseParams.add(" }.joinToString(prefix = \"{\", postfix = \"}\"))\n")
                             } else {
                                 responseParams.add(" }.joinToString(prefix = \"{\", postfix = \"}\")),\n")
@@ -868,13 +868,13 @@ class KotlinGenerator private constructor(
                                 responseParams.add(
                                     "%T(response.%N.joinToString())\n",
                                     TextContent::class,
-                                    field.name
+                                    field.name,
                                 )
                             } else {
                                 responseParams.add(
                                     "%T(response.%N.joinToString()),\n",
                                     TextContent::class,
-                                    field.name
+                                    field.name,
                                 )
                             }
                         }
@@ -889,14 +889,14 @@ class KotlinGenerator private constructor(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N?.toString() + \"\\\"\"",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         } else {
                                             responseParams.add(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N.toString() + \"\\\"\"",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         }
                                     } else {
@@ -905,14 +905,14 @@ class KotlinGenerator private constructor(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" + response.%N.%N?.toString() + \"\\\"\"",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         } else {
                                             responseParams.add(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" response.%N.%N.toString() + \"\\\"\"",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         }
                                     }
@@ -923,14 +923,14 @@ class KotlinGenerator private constructor(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N?.toString() + \"\\\", \" + ",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         } else {
                                             responseParams.add(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" + response.%N?.%N.toString() + \"\\\", \" + ",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         }
                                     } else {
@@ -939,21 +939,21 @@ class KotlinGenerator private constructor(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" + response.%N.%N?.toString() + \"\\\", \" + ",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         } else {
                                             responseParams.add(
                                                 "\"\\\"%N\\\":\" + \"\\\"\" response.%N.%N.toString() + \"\\\", \" + ",
                                                 field2.name,
                                                 field.name,
-                                                field2.name
+                                                field2.name,
                                             )
                                         }
                                     }
                                 }
                             }
                         }
-                        if (index >= it.declaredFields.size -1) {
+                        if (index >= it.declaredFields.size - 1) {
                             responseParams.add(" + \" }\")\n")
                         } else {
                             responseParams.add(" + \" }\"),\n")

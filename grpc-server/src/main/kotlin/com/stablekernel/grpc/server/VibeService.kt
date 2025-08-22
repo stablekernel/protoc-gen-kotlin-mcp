@@ -4,8 +4,8 @@ import examples.v1.Example.GetVibeRequest
 import examples.v1.Example.GetVibeResponse
 import examples.v1.Example.SetVibeArrayRequest
 import examples.v1.Example.SetVibeArrayResponse
-import examples.v1.Example.SetVibeDetailsResponse
 import examples.v1.Example.SetVibeDetailsRequest
+import examples.v1.Example.SetVibeDetailsResponse
 import examples.v1.Example.SetVibeObjectsRequest
 import examples.v1.Example.SetVibeObjectsResponse
 import examples.v1.Example.SetVibeRequest
@@ -41,10 +41,11 @@ class VibeService() : VibeServiceGrpcKt.VibeServiceCoroutineImplBase() {
         request.vibeObjectList.forEach { vibeObject ->
             response.addVibeObject(vibeObject)
         }
-        if (request.vibeObjectCount > 0)
+        if (request.vibeObjectCount > 0) {
             previousVibe = request.vibeObjectList.last().vibe
-        else
+        } else {
             println("No vibe objects found")
+        }
         return response.build()
     }
 }
