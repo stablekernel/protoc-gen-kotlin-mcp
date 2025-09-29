@@ -3,7 +3,7 @@ package com.stablekernel.grpc.server
 import com.stablekernel.grpc.server.GRpcApplicationEngine.Configuration
 import io.grpc.Server
 import io.grpc.ServerBuilder
-import io.grpc.protobuf.services.ProtoReflectionService
+import io.grpc.protobuf.services.ProtoReflectionServiceV1
 import io.ktor.events.Events
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationEnvironment
@@ -53,7 +53,7 @@ class GRpcApplicationEngine(
             ServerBuilder
                 .forPort(configuration.port)
                 .apply(configuration.serverConfigurer)
-                .addService(ProtoReflectionService.newInstance())
+                .addService(ProtoReflectionServiceV1.newInstance())
                 .build()
 
         server?.start()

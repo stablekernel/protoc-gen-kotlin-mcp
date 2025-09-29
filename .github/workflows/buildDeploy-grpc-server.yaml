@@ -1,4 +1,4 @@
-name: Build and Release Ktor Grpc Server App
+name: Build and Release Ktor Grpc & MCP Servers
 
 on:
   workflow_dispatch:
@@ -37,12 +37,14 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      - name: Build Ktor Web App
+      - name: Build Ktor gRPC Server and MCP Topeka Server
         env:
+          VERSION: ${{ github.event.inputs.version }}
         run: |
           ./gradlew clean ktlintCheck
-          ./gradlew :grpc-server:generateProto
-          ./gradlew buildFatJar -Pversion=${{ github.event.inputs.version }}
+          ./gradlew grpc-server:generateProto
+          ./scripts/generateProtos.sh
+          ./gradlew buildFatJar -Pversion=${VERSION}
 
 #      # Install Docker Compose
 #      - name: Install Docker Compose
@@ -95,12 +97,12 @@ jobs:
       - name: Create Release and Upload JAR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ github.event.inputs.version }}
         run: |
-          VERSION=${{ github.event.inputs.version }}
           TAG_NAME="v${VERSION}"
           RELEASE_NAME="$TAG_NAME"
           JAR_PATH="./grpc-server/build/libs/protoc-gen-kotlin-grpc-server-${VERSION}.jar"
-          JAR_PATH2="./mcp-server/build/libs/protoc-gen-kotlin-mcp-server-${VERSION}.jar"
+          JAR_PATH2="./mcp-proto/build/libs/protoc-gen-kotlin-mcp-server-${VERSION}.jar"
           ZIP_PATH="protoc-gen-kotlin-mcp-server-${VERSION}.zip"
           zip $ZIP_PATH $JAR_PATH $JAR_PATH2
           gh release create $TAG_NAME $ZIP_PATH --title "$RELEASE_NAME" --notes "protoc-gen-kotlin-mcp-server $TAG_NAME released"
