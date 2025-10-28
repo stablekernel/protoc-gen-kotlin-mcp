@@ -11,7 +11,6 @@ import com.squareup.wire.Syntax.PROTO_3
 import com.squareup.wire.WireField
 import com.squareup.wire.`internal`.JvmField
 import kotlin.Boolean
-import kotlin.ByteArray
 import kotlin.Double
 import kotlin.Float
 import kotlin.Int
@@ -36,7 +35,6 @@ import okio.ByteString.Companion.toByteString
  * @param vibe_sfixed32s The details of the vibe sfixed32 array
  * @param vibe_sfixed64s The details of the vibe sfixed64 array
  * @param vibe_bools The details of the vibe bool array
- * @param vibe_byteses the details of the vibe bytes array
  */
 @Serializable
 class VibeArray(
@@ -144,14 +142,6 @@ class VibeArray(
     schemaIndex = 12,
   )
   val vibe_bools: List<Boolean> = emptyList(),
-  @field:WireField(
-    tag = 15,
-    adapter = "com.squareup.wire.ProtoAdapter#BYTES",
-    label = WireField.Label.REPEATED,
-    jsonName = "vibeByteses",
-    schemaIndex = 13,
-  )
-  val vibe_byteses: List<ByteArray> = emptyList(),
 ) {
   fun copy(
     vibe_doubles: List<Double> = this.vibe_doubles,
@@ -167,8 +157,7 @@ class VibeArray(
     vibe_sfixed32s: List<Int> = this.vibe_sfixed32s,
     vibe_sfixed64s: List<Long> = this.vibe_sfixed64s,
     vibe_bools: List<Boolean> = this.vibe_bools,
-    vibe_byteses: List<ByteArray> = this.vibe_byteses,
-  ): VibeArray = VibeArray(vibe_doubles, vibe_floats, vibe_int32s, vibe_int64s, vibe_uint32s, vibe_uint64s, vibe_sint32s, vibe_sint64s, vibe_fixed32s, vibe_fixed64s, vibe_sfixed32s, vibe_sfixed64s, vibe_bools, vibe_byteses)
+  ): VibeArray = VibeArray(vibe_doubles, vibe_floats, vibe_int32s, vibe_int64s, vibe_uint32s, vibe_uint64s, vibe_sint32s, vibe_sint64s, vibe_fixed32s, vibe_fixed64s, vibe_sfixed32s, vibe_sfixed64s, vibe_bools)
 
   companion object {
     @JvmField
@@ -195,7 +184,6 @@ class VibeArray(
         size += ProtoAdapter.SFIXED32.asPacked().encodedSizeWithTag(12, value.vibe_sfixed32s)
         size += ProtoAdapter.SFIXED64.asPacked().encodedSizeWithTag(13, value.vibe_sfixed64s)
         size += ProtoAdapter.BOOL.asRepeated().encodedSizeWithTag(14, value.vibe_bools)
-        size += ProtoAdapter.BYTES.asRepeated().encodedSizeWithTag(15, value.vibe_byteses.map { it.toByteString() })
         return size
       }
 
@@ -213,11 +201,9 @@ class VibeArray(
         ProtoAdapter.SFIXED32.asPacked().encodeWithTag(writer, 12, value.vibe_sfixed32s)
         ProtoAdapter.SFIXED64.asPacked().encodeWithTag(writer, 13, value.vibe_sfixed64s)
         ProtoAdapter.BOOL.asRepeated().encodeWithTag(writer, 14, value.vibe_bools)
-        ProtoAdapter.BYTES.asRepeated().encodeWithTag(writer, 15, value.vibe_byteses.map { it.toByteString() })
       }
 
       override fun encode(writer: ReverseProtoWriter, `value`: VibeArray) {
-        ProtoAdapter.BYTES.asRepeated().encodeWithTag(writer, 15, value.vibe_byteses.map { it.toByteString() })
         ProtoAdapter.BOOL.asRepeated().encodeWithTag(writer, 14, value.vibe_bools)
         ProtoAdapter.SFIXED64.asPacked().encodeWithTag(writer, 13, value.vibe_sfixed64s)
         ProtoAdapter.SFIXED32.asPacked().encodeWithTag(writer, 12, value.vibe_sfixed32s)
@@ -247,7 +233,6 @@ class VibeArray(
         var vibe_sfixed32s: MutableList<Int>? = null
         var vibe_sfixed64s: MutableList<Long>? = null
         val vibe_bools = mutableListOf<Boolean>()
-        val vibe_byteses = mutableListOf<ByteArray>()
         val unknownFields = reader.forEachTag { tag ->
           when (tag) {
             2 -> {
@@ -371,7 +356,6 @@ class VibeArray(
               vibe_sfixed64s!!.add(ProtoAdapter.SFIXED64.decode(reader))
             }
             14 -> vibe_bools.add(ProtoAdapter.BOOL.decode(reader))
-            15 -> vibe_byteses.add(ProtoAdapter.BYTES.decode(reader).toByteArray())
             else -> reader.readUnknownField(tag)
           }
         }
@@ -389,7 +373,6 @@ class VibeArray(
           vibe_sfixed32s = vibe_sfixed32s ?: listOf(),
           vibe_sfixed64s = vibe_sfixed64s ?: listOf(),
           vibe_bools = vibe_bools,
-          vibe_byteses = vibe_byteses,
 
         )
       }

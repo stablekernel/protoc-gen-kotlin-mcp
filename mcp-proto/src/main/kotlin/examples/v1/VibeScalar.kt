@@ -14,7 +14,6 @@ import com.squareup.wire.WireField
 import com.squareup.wire.`internal`.JvmField
 import com.squareup.wire.`internal`.JvmStatic
 import kotlin.Boolean
-import kotlin.ByteArray
 import kotlin.Double
 import kotlin.Float
 import kotlin.Int
@@ -39,7 +38,6 @@ import okio.ByteString.Companion.toByteString
  * @param vibe_sfixed32 The details of the vibe sfixed32
  * @param vibe_sfixed64 The details of the vibe sfixed64
  * @param vibe_bool The details of the vibe bool
- * @param vibe_bytes the details of the vibe bytes
  * @param vibe_enum The details of the vibe string
  */
 @Serializable
@@ -148,19 +146,11 @@ class VibeScalar(
   )
   val vibe_bool: Boolean = false,
   @field:WireField(
-    tag = 15,
-    adapter = "com.squareup.wire.ProtoAdapter#BYTES",
-    label = WireField.Label.OMIT_IDENTITY,
-    jsonName = "vibeBytes",
-    schemaIndex = 13,
-  )
-  val vibe_bytes: ByteArray = kotlin.ByteArray(0),
-  @field:WireField(
     tag = 16,
     adapter = "examples.v1.VibeScalar${'$'}VibeEnum#ADAPTER",
     label = WireField.Label.REPEATED,
     jsonName = "vibeEnum",
-    schemaIndex = 14,
+    schemaIndex = 13,
   )
   val vibe_enum: List<VibeEnum> = emptyList(),
 ) {
@@ -178,9 +168,8 @@ class VibeScalar(
     vibe_sfixed32: Int = this.vibe_sfixed32,
     vibe_sfixed64: Long = this.vibe_sfixed64,
     vibe_bool: Boolean = this.vibe_bool,
-    vibe_bytes: ByteArray = this.vibe_bytes,
     vibe_enum: List<VibeEnum> = this.vibe_enum,
-  ): VibeScalar = VibeScalar(vibe_double, vibe_float, vibe_int32, vibe_int64, vibe_uint32, vibe_uint64, vibe_sint32, vibe_sint64, vibe_fixed32, vibe_fixed64, vibe_sfixed32, vibe_sfixed64, vibe_bool, vibe_bytes, vibe_enum)
+  ): VibeScalar = VibeScalar(vibe_double, vibe_float, vibe_int32, vibe_int64, vibe_uint32, vibe_uint64, vibe_sint32, vibe_sint64, vibe_fixed32, vibe_fixed64, vibe_sfixed32, vibe_sfixed64, vibe_bool, vibe_enum)
 
   companion object {
     @JvmField
@@ -231,9 +220,6 @@ class VibeScalar(
         if (value.vibe_bool != false) {
           size += ProtoAdapter.BOOL.encodedSizeWithTag(14, value.vibe_bool)
         }
-        if (value.vibe_bytes != kotlin.ByteArray(0)) {
-          size += ProtoAdapter.BYTES.encodedSizeWithTag(15, value.vibe_bytes.toByteString())
-        }
         size += VibeEnum.ADAPTER.asRepeated().encodedSizeWithTag(16, value.vibe_enum)
         return size
       }
@@ -276,17 +262,11 @@ class VibeScalar(
         if (value.vibe_bool != false) {
           ProtoAdapter.BOOL.encodeWithTag(writer, 14, value.vibe_bool)
         }
-        if (value.vibe_bytes != kotlin.ByteArray(0)) {
-          ProtoAdapter.BYTES.encodeWithTag(writer, 15, value.vibe_bytes.toByteString())
-        }
         VibeEnum.ADAPTER.asRepeated().encodeWithTag(writer, 16, value.vibe_enum)
       }
 
       override fun encode(writer: ReverseProtoWriter, `value`: VibeScalar) {
         VibeEnum.ADAPTER.asRepeated().encodeWithTag(writer, 16, value.vibe_enum)
-        if (value.vibe_bytes != kotlin.ByteArray(0)) {
-          ProtoAdapter.BYTES.encodeWithTag(writer, 15, value.vibe_bytes.toByteString())
-        }
         if (value.vibe_bool != false) {
           ProtoAdapter.BOOL.encodeWithTag(writer, 14, value.vibe_bool)
         }
@@ -340,7 +320,6 @@ class VibeScalar(
         var vibe_sfixed32: Int = 0
         var vibe_sfixed64: Long = 0L
         var vibe_bool: Boolean = false
-        var vibe_bytes: ByteArray = ByteArray(0)
         val vibe_enum = mutableListOf<VibeEnum>()
         val unknownFields = reader.forEachTag { tag ->
           when (tag) {
@@ -357,7 +336,6 @@ class VibeScalar(
             12 -> vibe_sfixed32 = ProtoAdapter.SFIXED32.decode(reader)
             13 -> vibe_sfixed64 = ProtoAdapter.SFIXED64.decode(reader)
             14 -> vibe_bool = ProtoAdapter.BOOL.decode(reader)
-            15 -> vibe_bytes = ProtoAdapter.BYTES.decode(reader).toByteArray()
             16 -> try {
               VibeEnum.ADAPTER.tryDecode(reader, vibe_enum)
             } catch (e: ProtoAdapter.EnumConstantNotFoundException) {
@@ -380,7 +358,6 @@ class VibeScalar(
           vibe_sfixed32 = vibe_sfixed32,
           vibe_sfixed64 = vibe_sfixed64,
           vibe_bool = vibe_bool,
-          vibe_bytes = vibe_bytes,
           vibe_enum = vibe_enum,
 
         )

@@ -64,8 +64,6 @@ message VibeScalar {
   sfixed64 vibe_sfixed64 = 13;
   // The details of the vibe bool
   bool vibe_bool = 14;
-  // the details of the vibe bytes
-  bytes vibe_bytes = 15;
 
   // The details of the vibe string
   enum VibeEnum {
@@ -105,8 +103,6 @@ message VibeArray {
   repeated sfixed64 vibe_sfixed64s = 13;
   // The details of the vibe bool array
   repeated bool vibe_bools = 14;
-  // the details of the vibe bytes array
-  repeated bytes vibe_byteses = 15;
   // The details of the vibe scalar array
 }
 
